@@ -24,3 +24,29 @@ Do not commit automatically. Only commit when explicitly asked.
 
 ### Next Step
 Build first-draft prototype with landing, dashboard, lesson overview modal, and lesson study page.
+
+## 2026-05-05 — Baseline Prototype Completed
+
+- Implemented backend FastAPI skeleton and mock endpoints:
+  - `GET /health`
+  - `GET /api/lessons`
+  - `GET /api/lessons/{lesson_id}`
+  - `POST /api/ai/explain`
+  - `GET /api/notebook`
+  - `POST /api/notebook/save`
+- Implemented frontend Next.js + TypeScript + Tailwind prototype:
+  - Landing page
+  - Dashboard lesson card flow
+  - Lesson overview modal
+  - Three-panel lesson study page
+- Wired HSK 6 Lesson 1 mock content from `data/hsk6/lesson-01.json`.
+- Added clickable highlighted vocabulary in passage with popup actions.
+- Added grammar notes, word distinction tables, exercise reasoning, writing guidance, AI tutor mock panel, and notebook mock section.
+- Added project-level `.gitignore` for Python/Node/Next/env/log/editor/OS artifacts.
+- Fixed malformed JSON strings in lesson data to restore frontend runtime.
+- Created baseline commit:
+  - `3da062f` — Scaffold HSK Study Companion prototype (FastAPI + Next.js)
+
+### Next Step
+- Pause implementation changes.
+- Resume later with UI/content rearrangement and refinement on top of baseline commit `3da062f`.

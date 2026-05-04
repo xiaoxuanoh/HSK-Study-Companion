@@ -26,3 +26,22 @@ A reconstructed Lesson 1 PDF exists as a reference in assets/reference/. Page 9 
 **Important:** Do not OCR or parse the PDF in the app. Use data/hsk6/lesson-01.json as the structured source of truth for the prototype.
 
 Future lessons should be added by creating new lesson JSON files in data/hsk{level}/.
+
+## Current Prototype Status (Baseline)
+
+- FastAPI mock endpoints are implemented and running against JSON data.
+- Next.js prototype pages are implemented:
+  - Landing page
+  - Dashboard with lesson card + overview modal
+  - Lesson study page with three-panel layout
+- Lesson sections are wired from `data/hsk6/lesson-01.json`:
+  - Warm-up
+  - Passage (highlighted clickable vocabulary popup)
+  - Vocabulary
+  - Grammar notes
+  - Word distinction tables
+  - Exercises reasoning
+  - Writing/application guidance
+  - Expansion
+  - Notebook (mock local state)
+- AI tutor panel is mock-only in this phase.
