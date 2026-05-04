@@ -1,0 +1,510 @@
+{
+  "id": "hsk6-lesson-01",
+  "level": "HSK6",
+  "unit": {
+    "number": 1,
+    "titleChinese": "生活点滴",
+    "titleEnglish": "Moments of life"
+  },
+  "lesson": {
+    "number": 1,
+    "titleChinese": "孩子给我们的启示",
+    "titleEnglish": "An epiphany from the children"
+  },
+  "progress": 0,
+  "lastAccessDate": null,
+  "sections": {
+    "warmup": {
+      "title": "热身 Warm-up",
+      "prompts": [
+        {
+          "id": "wu-1",
+          "chinese": "你觉得孩子身上有哪些值得大人学习的品质？",
+          "english": "What qualities do you think children have that adults can learn from?"
+        },
+        {
+          "id": "wu-2",
+          "chinese": "你还记得自己小时候做过哪些有趣或让大人惊讶的事情吗？",
+          "english": "Do you remember doing anything interesting or surprising as a child that amazed the adults around you?"
+        },
+        {
+          "id": "wu-3",
+          "chinese": "在你的文化里，大人和孩子之间的关系是怎样的？",
+          "english": "In your culture, what is the relationship between adults and children like?"
+        }
+      ]
+    },
+    "passage": {
+      "title": "课文 Passage",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "text": "我老公是个爽快人，做事从不拖泥带水。可他有个毛病——爱嚷嚷，尤其是在厨房里做他的拿手菜时，喜欢把音乐声音开得很大。说实话，我挺烦的，但又不好意思说什么，只好装作没听见。"
+        },
+        {
+          "id": "p2",
+          "text": "有一天，我们的女儿实在忍不住了，走进厨房，郑重地对她爸爸说：'爸爸，你做饭的时候声音能不能小一点儿？'她爸爸愣了一下，随即笑着把音乐声音调小了。"
+        },
+        {
+          "id": "p3",
+          "text": "就这么简单？我有些疑惑，反问自己：为什么我一直没有开口说呢？孩子做到的事，我为什么做不到？这个瞬间，我意识到，孩子身上有一种大人常常忽略的宽容与直率——她不嫉妒，不嘲笑，不讨好，只是当面说出自己的感受。"
+        },
+        {
+          "id": "p4",
+          "text": "从那以后，我开始慢慢改变。我学着对身边的人更加直接，说出真实的感受，而不是一味地附和或忍耐。家里的气氛也变得更加融洽，彼此之间更加亲密了。"
+        },
+        {
+          "id": "p5",
+          "text": "孩子固然需要大人的督促和约束，但孩子身上也有值得我们学习的东西。这次，她给了我一个很大的启示：真正的和睦不是靠忍耐维持的，而是靠真实的沟通建立的。"
+        }
+      ],
+      "vocabularyHighlights": {
+        "爽快": "vocab-shuangkuai",
+        "嚷嚷": "vocab-rangrang",
+        "拿手": "vocab-nashou",
+        "郑重": "vocab-zhengzhong",
+        "疑惑": "vocab-yihuo",
+        "反问": "vocab-fanwen",
+        "瞬间": "vocab-shunjian",
+        "意识": "vocab-yishi",
+        "忽略": "vocab-hulue",
+        "宽容": "vocab-kuanrong",
+        "嫉妒": "vocab-jidu",
+        "嘲笑": "vocab-chaoxiao",
+        "讨好": "vocab-taohao",
+        "附和": "vocab-fuhe",
+        "融洽": "vocab-rongqia",
+        "亲密": "vocab-qinmi",
+        "固然": "vocab-guran",
+        "督促": "vocab-ducu",
+        "约束": "vocab-yueshu",
+        "启示": "vocab-qishi",
+        "和睦": "vocab-hemu"
+      }
+    },
+    "vocabulary": {
+      "title": "词语 Vocabulary",
+      "items": [
+        {
+          "id": "vocab-qishi",
+          "word": "启示",
+          "pinyin": "qǐshì",
+          "partOfSpeech": "n.",
+          "meaning": "enlightenment; revelation; insight gained from experience",
+          "simpleExplanation": "When something happens and you learn an important idea from it — that idea is 启示. It's the lesson life teaches you.",
+          "usageFeeling": "Slightly formal. Often used in writing or reflection. Feels like something meaningful was gained.",
+          "collocations": ["给我启示", "从……中得到启示", "启示我们"],
+          "example": "这件事给了我很大的启示。",
+          "exampleTranslation": "This incident gave me a great insight.",
+          "nearSynonyms": ["启发", "感悟", "领悟"],
+          "commonMistake": "启示 (noun: insight/revelation) vs 启发 (can be verb: to inspire). '老师启发了我' is correct; '老师启示了我' is less natural."
+        },
+        {
+          "id": "vocab-shuangkuai",
+          "word": "爽快",
+          "pinyin": "shuǎngkuai",
+          "partOfSpeech": "adj.",
+          "meaning": "straightforward; frank; refreshing",
+          "simpleExplanation": "Describes someone who is direct, decisive, and doesn't beat around the bush. Can also describe a refreshing feeling.",
+          "usageFeeling": "Generally positive. Used to praise someone who acts decisively or speaks frankly.",
+          "collocations": ["爽快地答应", "性格爽快", "说话爽快"],
+          "example": "他是个爽快人，从不拖泥带水。",
+          "exampleTranslation": "He is a straightforward person who never drags things out.",
+          "nearSynonyms": ["直爽", "直率", "痛快"],
+          "commonMistake": "Don't confuse with 舒服 (comfortable). 爽快 specifically describes directness of personality or a crisp feeling."
+        },
+        {
+          "id": "vocab-guran",
+          "word": "固然",
+          "pinyin": "gùrán",
+          "partOfSpeech": "conj.",
+          "meaning": "admittedly; it is true that; granted that",
+          "simpleExplanation": "Used to admit or concede that something is true, but then shift focus to a more important point. Always signals a 'but' is coming.",
+          "usageFeeling": "Formal and written. Creates a structure of concession + contrast. Never used alone.",
+          "collocations": ["固然……但是", "固然……可是", "固然……然而"],
+          "example": "孩子固然需要大人的督促，但也有值得我们学习的地方。",
+          "exampleTranslation": "Children admittedly need adult supervision, but they also have things worth learning from.",
+          "nearSynonyms": ["当然", "诚然", "尽管"],
+          "commonMistake": "固然 MUST have a contrasting B clause to follow. Using it without contrast is a grammar error."
+        },
+        {
+          "id": "vocab-zhengzhong",
+          "word": "郑重",
+          "pinyin": "zhèngzhòng",
+          "partOfSpeech": "adj./adv.",
+          "meaning": "serious; solemn; earnest",
+          "simpleExplanation": "Describes acting or speaking with seriousness, weight, and care — not casually.",
+          "usageFeeling": "Carries a sense of formality and respect for the matter at hand.",
+          "collocations": ["郑重地说", "郑重声明", "郑重其事"],
+          "example": "她郑重地对爸爸说了自己的感受。",
+          "exampleTranslation": "She earnestly told her father how she felt.",
+          "nearSynonyms": ["严肃", "认真", "庄重"],
+          "commonMistake": "郑重 focuses on the seriousness of one's manner; 严肃 more often describes an atmosphere or overall expression."
+        },
+        {
+          "id": "vocab-hulue",
+          "word": "忽略",
+          "pinyin": "hūlüè",
+          "partOfSpeech": "v.",
+          "meaning": "to overlook; to neglect; to ignore unintentionally",
+          "simpleExplanation": "When you fail to notice or pay attention to something that you should have noticed — often unintentional.",
+          "usageFeeling": "Neutral to slightly negative. Implies something important was missed.",
+          "collocations": ["忽略了细节", "被忽略", "不能忽略"],
+          "example": "大人常常忽略孩子身上的优点。",
+          "exampleTranslation": "Adults often overlook the good qualities in children.",
+          "nearSynonyms": ["忽视", "漠视", "无视"],
+          "commonMistake": "忽略 (overlook, often unintentional) vs 忽视 (disregard, more deliberate). 忽视 carries more of a sense of willful neglect."
+        },
+        {
+          "id": "vocab-rongqia",
+          "word": "融洽",
+          "pinyin": "róngqià",
+          "partOfSpeech": "adj.",
+          "meaning": "harmonious; on good terms; warm and friendly atmosphere",
+          "simpleExplanation": "Describes a warm, smooth relationship or atmosphere where people get along well — no tension or awkwardness.",
+          "usageFeeling": "Positive. Often used for relationships, group dynamics, or atmosphere.",
+          "collocations": ["关系融洽", "气氛融洽", "融洽相处"],
+          "example": "家里的气氛变得更加融洽了。",
+          "exampleTranslation": "The atmosphere at home became more harmonious.",
+          "nearSynonyms": ["和睦", "和谐", "和好"],
+          "commonMistake": "融洽 often describes the feeling/atmosphere; 和睦 focuses more on peaceful coexistence, especially in family settings."
+        },
+        {
+          "id": "vocab-jidu",
+          "word": "嫉妒",
+          "pinyin": "jídù",
+          "partOfSpeech": "v./n.",
+          "meaning": "to be jealous; jealousy; envy",
+          "simpleExplanation": "The feeling of resentment toward someone who has something you want — a negative emotion directed at others' advantages.",
+          "usageFeeling": "Negative emotion. Implies resentment more than just admiration.",
+          "collocations": ["嫉妒别人", "心生嫉妒", "嫉妒心"],
+          "example": "她不嫉妒，只是直接说出了自己的感受。",
+          "exampleTranslation": "She wasn't jealous — she simply expressed her feelings directly.",
+          "nearSynonyms": ["羡慕", "眼红"],
+          "commonMistake": "嫉妒 is stronger and more negative than 羡慕 (admiration). 羡慕 can be positive; 嫉妒 almost never is."
+        },
+        {
+          "id": "vocab-fuhe",
+          "word": "附和",
+          "pinyin": "fùhè",
+          "partOfSpeech": "v.",
+          "meaning": "to echo; to go along with what someone says without real conviction",
+          "simpleExplanation": "When you agree with or repeat what others say just to avoid conflict or to please them, not because you truly agree.",
+          "usageFeeling": "Slightly negative. Implies lack of genuine opinion or sycophancy.",
+          "collocations": ["随声附和", "跟着附和", "不敢附和"],
+          "example": "我以前总是附和别人，不敢说出真实感受。",
+          "exampleTranslation": "I used to always go along with others and dared not express my true feelings.",
+          "nearSynonyms": ["迎合", "顺从", "随声附和"],
+          "commonMistake": "附和 always has a connotation of insincerity or conformity. Don't use it to describe genuine agreement."
+        },
+        {
+          "id": "vocab-kuanrong",
+          "word": "宽容",
+          "pinyin": "kuānróng",
+          "partOfSpeech": "adj./v.",
+          "meaning": "tolerant; forgiving; to tolerate; to forgive",
+          "simpleExplanation": "The quality of accepting others' faults or differences without anger or judgment.",
+          "usageFeeling": "Positive. Often considered a virtue. Can describe a person or an attitude.",
+          "collocations": ["宽容别人", "宽容的态度", "心胸宽容"],
+          "example": "孩子身上有一种宽容与直率。",
+          "exampleTranslation": "Children possess a kind of tolerance and candor.",
+          "nearSynonyms": ["包容", "大度", "仁慈"],
+          "commonMistake": "宽容 (tolerant of others' faults) vs 包容 (broadly accepting; can include embracing differences). 包容 is slightly wider in scope."
+        },
+        {
+          "id": "vocab-yishi",
+          "word": "意识",
+          "pinyin": "yìshí",
+          "partOfSpeech": "v./n.",
+          "meaning": "to realize; to become aware of; consciousness; awareness",
+          "simpleExplanation": "As a verb: to become aware of something, to realize. As a noun: consciousness, sense of awareness.",
+          "usageFeeling": "Neutral. Commonly used in both written and spoken Chinese.",
+          "collocations": ["意识到", "没有意识到", "环保意识"],
+          "example": "这个瞬间，我意识到孩子也能教我们很多东西。",
+          "exampleTranslation": "In that moment, I realized that children can teach us a lot too.",
+          "nearSynonyms": ["发现", "认识到", "察觉"],
+          "commonMistake": "意识 as a verb almost always appears as 意识到 (realize/become aware). Just 意识 alone is usually a noun."
+        },
+        {
+          "id": "vocab-ducu",
+          "word": "督促",
+          "pinyin": "dūcù",
+          "partOfSpeech": "v.",
+          "meaning": "to urge; to supervise and push someone to do something",
+          "simpleExplanation": "When you keep reminding or pushing someone to do something they should be doing — like a supervisor or parent would.",
+          "usageFeeling": "Neutral to slightly authoritative. Common in education and parenting contexts.",
+          "collocations": ["督促学习", "督促完成", "需要督促"],
+          "example": "孩子固然需要大人的督促和约束。",
+          "exampleTranslation": "Children admittedly need adults to supervise and guide them.",
+          "nearSynonyms": ["催促", "监督", "敦促"],
+          "commonMistake": "督促 implies ongoing supervision over time; 催促 is more about urging someone to hurry up in the moment."
+        },
+        {
+          "id": "vocab-hemu",
+          "word": "和睦",
+          "pinyin": "hémù",
+          "partOfSpeech": "adj.",
+          "meaning": "harmonious; on peaceful and friendly terms (especially within a family)",
+          "simpleExplanation": "Describes a peaceful, friendly, and conflict-free relationship — most often used for families.",
+          "usageFeeling": "Positive. Classic term for family harmony.",
+          "collocations": ["和睦相处", "家庭和睦", "和睦的关系"],
+          "example": "真正的和睦不是靠忍耐维持的。",
+          "exampleTranslation": "True harmony is not maintained by endurance alone.",
+          "nearSynonyms": ["融洽", "和谐", "团结"],
+          "commonMistake": "和睦 is often specifically about interpersonal/family harmony; 和谐 is broader (can describe society, nature, systems)."
+        }
+      ]
+    },
+    "grammar": {
+      "title": "注释 Grammar Notes",
+      "items": [
+        {
+          "id": "gram-guran",
+          "grammarPoint": "固然",
+          "type": "Conjunction",
+          "coreMeaning": "Acknowledges that A is true, while emphasizing B as more important or as a contrast.",
+          "structure": "A 固然……，但是 / 可是 / 却 / 然而 B……",
+          "logic": {
+            "A": "Admitted fact — the speaker accepts this is true",
+            "B": "Speaker's real point, stronger emphasis, or counterpoint"
+          },
+          "tone": "Formal and written. Signals a concession + contrast. The speaker is saying: 'Yes, A is true — but B matters more.' Rarely used in everyday speech.",
+          "example": "孩子固然需要大人的督促，但也有值得我们学习的地方。",
+          "breakdown": [
+            "孩子固然需要大人的督促 → concedes that children need supervision (A)",
+            "但也有值得我们学习的地方 → emphasizes that children are also worth learning from (B)"
+          ],
+          "commonMistake": "Never use 固然 without a contrasting B clause. It cannot stand alone as 'of course' — that would be 当然.",
+          "miniPractice": "Try writing: '这件事固然……，但是……' about studying Chinese or a personal challenge."
+        },
+        {
+          "id": "gram-caineng",
+          "grammarPoint": "只有……才能……",
+          "type": "Correlative conjunction",
+          "coreMeaning": "Only by doing A can you achieve B. Emphasizes that A is the necessary condition for B.",
+          "structure": "只有 A，才能 B",
+          "logic": {
+            "A": "The required condition",
+            "B": "The result that depends on A"
+          },
+          "tone": "Neutral to slightly formal. Used to stress that there is no shortcut — A is essential.",
+          "example": "只有真实地沟通，才能建立真正的和睦。",
+          "breakdown": [
+            "只有真实地沟通 → only through honest communication (A — the necessary condition)",
+            "才能建立真正的和睦 → can true harmony be built (B — the result)"
+          ],
+          "commonMistake": "Don't confuse 只有……才能 (only if A, then B) with 只要……就能 (as long as A, then B). 只有 is more restrictive.",
+          "miniPractice": "Complete: '只有……，才能真正……'"
+        },
+        {
+          "id": "gram-bushi-ershi",
+          "grammarPoint": "不是……而是……",
+          "type": "Correlative conjunction",
+          "coreMeaning": "Not A, but rather B. Used to correct a misconception and replace it with the real answer.",
+          "structure": "不是 A，而是 B",
+          "logic": {
+            "A": "The wrong assumption or the thing being rejected",
+            "B": "The correct or true statement"
+          },
+          "tone": "Neutral. Very common in both spoken and written Chinese. Clear and direct in correcting or specifying.",
+          "example": "真正的和睦不是靠忍耐维持的，而是靠真实的沟通建立的。",
+          "breakdown": [
+            "不是靠忍耐维持的 → not maintained by endurance (rejecting A)",
+            "而是靠真实的沟通建立的 → but built through genuine communication (asserting B)"
+          ],
+          "commonMistake": "The two parts must be grammatically parallel. 不是 A 而是 B — both A and B should be the same grammatical type.",
+          "miniPractice": "Write a sentence: '学好中文不是……而是……'"
+        }
+      ]
+    },
+    "wordDistinction": {
+      "title": "词语辨析 Word Distinction",
+      "groups": [
+        {
+          "id": "wd-hulue-hushi",
+          "words": ["忽略", "忽视"],
+          "sharedMeaning": "Both mean to fail to give proper attention to something or someone.",
+          "comparison": [
+            { "dimension": "Core meaning", "word1": "To overlook; miss without noticing", "word2": "To disregard; consciously look past" },
+            { "dimension": "Intentionality", "word1": "Usually unintentional — you didn't notice", "word2": "More deliberate — you saw it but chose not to care" },
+            { "dimension": "Tone", "word1": "Neutral — no strong moral judgment", "word2": "Stronger — implies irresponsibility or negligence" },
+            { "dimension": "Common usage", "word1": "忽略了细节 (overlooked the details)", "word2": "忽视安全 (disregarded safety)" },
+            { "dimension": "Example", "word1": "我忽略了他的感受。I didn't notice I was overlooking his feelings.", "word2": "他忽视了孩子的需求。He neglected the child's needs." }
+          ],
+          "commonMistake": "Using 忽略 when you want to criticize someone for willful neglect — 忽视 is stronger and more appropriate in that case.",
+          "memoryClue": "忽略 = accidentally skipped. 忽视 = chose to look away."
+        },
+        {
+          "id": "wd-dangran-guran",
+          "words": ["当然", "固然"],
+          "sharedMeaning": "Both can acknowledge something as true, but their functions are very different.",
+          "comparison": [
+            { "dimension": "Core meaning", "word1": "Of course; naturally; certainly", "word2": "Admittedly; it is true that; granted" },
+            { "dimension": "Function", "word1": "Confirms something as obvious or expected", "word2": "Concedes A in order to make point B" },
+            { "dimension": "Requires contrast?", "word1": "No — can stand alone", "word2": "Yes — always needs a B clause with 但/可是/然而" },
+            { "dimension": "Tone", "word1": "Neutral to casual; common in everyday speech", "word2": "Formal and written; rarely spoken" },
+            { "dimension": "Example", "word1": "当然可以！Of course!", "word2": "这固然重要，但更重要的是……This is admittedly important, but more important is…" }
+          ],
+          "commonMistake": "Using 固然 where you just mean 'of course' — 当然 is correct for that. 固然 must always come with a contrast.",
+          "memoryClue": "当然 = 'of course' (confirming the obvious). 固然 = 'admittedly true, but…' (concession before a contrast)."
+        },
+        {
+          "id": "wd-qishi-qifa",
+          "words": ["启示", "启发"],
+          "sharedMeaning": "Both relate to gaining insight or understanding from something.",
+          "comparison": [
+            { "dimension": "Core meaning", "word1": "Insight or lesson gained from experience (noun)", "word2": "To inspire or enlighten; inspiration (verb or noun)" },
+            { "dimension": "Part of speech", "word1": "Primarily noun", "word2": "Commonly used as verb; also noun" },
+            { "dimension": "Source", "word1": "Often from events, experiences, nature", "word2": "Often from a person, teacher, or question" },
+            { "dimension": "Example", "word1": "这件事给了我启示。(Event → insight to me)", "word2": "老师启发了我。(Teacher → inspired me)" }
+          ],
+          "commonMistake": "Treating 启示 as a verb. '老师启示了我' sounds unnatural; use '老师启发了我' instead.",
+          "memoryClue": "启示 = life taught me something (like a revelation). 启发 = someone helped me think of something (to inspire)."
+        },
+        {
+          "id": "wd-yanli-yange",
+          "words": ["严厉", "严格"],
+          "sharedMeaning": "Both describe strictness or high standards.",
+          "comparison": [
+            { "dimension": "Core meaning", "word1": "Stern; harsh; severe (in manner or punishment)", "word2": "Strict; rigorous; demanding (in standards or rules)" },
+            { "dimension": "Tone", "word1": "Emotionally charged — fear-inducing, intimidating", "word2": "More neutral — a matter of standards and discipline" },
+            { "dimension": "Common usage", "word1": "严厉的批评 / 严厉地惩罚", "word2": "严格的要求 / 严格地遵守" },
+            { "dimension": "Example", "word1": "老师严厉地批评了他。The teacher harshly criticized him.", "word2": "她对自己要求很严格。She holds herself to very strict standards." }
+          ],
+          "commonMistake": "Saying 严格地批评 when you mean harsh scolding — 严厉 is correct. 严格 is about standards, not emotional intensity.",
+          "memoryClue": "严厉 = the emotion of harshness (how it feels). 严格 = the standard of strictness (how it is measured)."
+        }
+      ]
+    },
+    "exercises": {
+      "title": "练习 Exercises",
+      "items": [
+        {
+          "id": "ex-1",
+          "type": "fill_in_the_blank",
+          "question": "选择合适的词填空：忽略 / 忽视\n\n1. 他太忙了，_____ 了孩子的感受。\n2. 政府不能_____ 环境污染的问题。",
+          "answers": { "1": "忽略", "2": "忽视" },
+          "explanation": {
+            "1": {
+              "whyCorrect": "忽略 is correct because being too busy caused an unintentional oversight — he didn't notice he was neglecting the child's feelings.",
+              "whyOthersWrong": "忽视 implies more deliberate disregard, which changes the meaning — it would suggest he intentionally didn't care."
+            },
+            "2": {
+              "whyCorrect": "忽视 is correct because the government is expected to actively address pollution — using 忽视 implies willful negligence and stronger moral responsibility.",
+              "whyOthersWrong": "忽略 would make the oversight sound accidental, reducing the sense of accountability expected of a government."
+            }
+          },
+          "relatedConcept": "词语辨析：忽略 vs 忽视"
+        },
+        {
+          "id": "ex-2",
+          "type": "multiple_choice",
+          "question": "选择合适的词完成句子：\n\n这件事_____很复杂，但我们还是要认真解决。",
+          "options": ["A. 当然", "B. 固然", "C. 虽然", "D. 既然"],
+          "correctAnswer": "B",
+          "explanation": {
+            "whyCorrect": "固然 is correct because it acknowledges the complexity (A) while signaling that a contrasting point follows (we still need to solve it = B). The sentence has a concession + contrast structure.",
+            "optionAnalysis": {
+              "A": "当然 means 'of course' — it confirms something expected, with no contrast. It doesn't fit the sentence structure here.",
+              "B": "固然 (correct) — acknowledges that A is true while preparing for the contrast in B.",
+              "C": "虽然 means 'although' — also shows concession, but is more casual and spoken. Both could work technically, but 固然 is the better fit for formal written Chinese.",
+              "D": "既然 means 'since / given that' — it introduces a premise that leads to a conclusion, not a concession-contrast pattern."
+            }
+          },
+          "relatedConcept": "固然 (grammar note)"
+        },
+        {
+          "id": "ex-3",
+          "type": "multiple_choice",
+          "question": "下列句子中，'郑重'使用正确的是哪一句？",
+          "options": [
+            "A. 他郑重地笑了笑，表示同意。",
+            "B. 她郑重地说：'这件事非常重要，请大家认真对待。'",
+            "C. 他郑重地吃完了饭。",
+            "D. 她郑重地走进了超市。"
+          ],
+          "correctAnswer": "B",
+          "explanation": {
+            "whyCorrect": "郑重 describes a serious, earnest manner of speech or action that carries weight. Sentence B uses it correctly — the content of the speech matches the gravity of 郑重.",
+            "optionAnalysis": {
+              "A": "Laughing (笑了笑) is generally a casual gesture — pairing it with 郑重 creates a contradiction unless the context is very unusual.",
+              "B": "Correct — the serious request matches the gravity of 郑重.",
+              "C": "Eating is a mundane action. 郑重 doesn't fit here.",
+              "D": "Walking into a supermarket is not a significant act. 郑重 would be out of place."
+            }
+          },
+          "relatedConcept": "郑重 (vocabulary)"
+        }
+      ]
+    },
+    "writing": {
+      "title": "应用 Writing / Application",
+      "prompt": {
+        "chinese": "请以“孩子给我的启示”为题，写一篇短文（约200字）。",
+        "english": "Write a short essay (approximately 200 characters) titled 'The Lesson a Child Taught Me.'"
+      },
+      "promptExplanation": "This essay asks you to reflect on something a child said or did that gave you a new perspective or insight. It should feel personal and reflective — not academic. Use vocabulary and grammar from this lesson where possible.",
+      "writingPlan": [
+        "Paragraph 1: Describe the situation — what happened? What did the child do or say?",
+        "Paragraph 2: Describe your reaction — what did you realize? What did you feel?",
+        "Paragraph 3: Reflect — what did this teach you? How did it change how you think or act?"
+      ],
+      "usefulPatterns": [
+        "有一天，……",
+        "我意识到……",
+        "这件事给了我很大的启示……",
+        "孩子固然……，但是……",
+        "从那以后，我……",
+        "真正的……不是……而是……"
+      ],
+      "sampleAnswer": {
+        "chinese": "有一天，我的侄女看见我一边看手机一边听她说话。她停下来，认真地问我：'你在听我说话吗？'我当时很尴尬，却也很感动。她不怕说出真实的感受，这是很多大人都做不到的事。这件事给了我很大的启示：真正的陪伴不是身体在场，而是心在场。从那以后，我尽量在和别人交流的时候，把手机放在一边。",
+        "english": "One day, my niece noticed I was looking at my phone while listening to her. She stopped and earnestly asked: 'Are you listening to me?' I was embarrassed, but also touched. She wasn't afraid to speak her true feelings — something many adults can't do. This gave me a great insight: true companionship is not about being physically present, but being mentally present. Since then, I try to put my phone away when talking with others."
+      },
+      "correctionNote": "There is more than one correct way to write this essay. Suggested corrections should point out grammar or clarity issues, not enforce a single style. A learner's authentic voice matters."
+    },
+    "expansion": {
+      "title": "扩展 Expansion",
+      "reading": {
+        "title": "延伸阅读 Further Reading",
+        "content": "儿童心理学家认为，孩子的直率来自于他们尚未建立社交“过滤机制”。他们说出感受，不是因为勇敢，而是因为还没有学会压抑。但这种直率，对成年人来说，却是一种难得的品质。研究表明，能够直接表达真实感受的人，往往在人际关系中更加健康、满足。",
+        "translation": "Child psychologists believe that children's directness comes from not yet having developed social 'filters.' They express their feelings not because they are brave, but because they haven't yet learned to suppress them. But this directness is, for adults, a rare and valuable quality. Research shows that people who can directly express their true feelings tend to have healthier and more fulfilling interpersonal relationships."
+      },
+      "discussion": [
+        { "chinese": "你认为大人应该向孩子学习哪些品质？", "english": "What qualities do you think adults should learn from children?" },
+        { "chinese": "在你的文化背景中，直接表达感受是被鼓励的吗？", "english": "In your cultural background, is directly expressing feelings encouraged?" }
+      ]
+    },
+    "notebook": {
+      "title": "我的笔记 My Notebook",
+      "savedItems": [
+        {
+          "id": "nb-1",
+          "type": "vocabulary",
+          "word": "启示",
+          "pinyin": "qǐshì",
+          "meaning": "insight; lesson learned from experience",
+          "savedAt": "2026-05-04T10:00:00Z",
+          "note": "Remember: 启示 is a noun. 启发 can be a verb."
+        },
+        {
+          "id": "nb-2",
+          "type": "grammar",
+          "grammarPoint": "固然",
+          "structure": "A 固然……，但是 B",
+          "savedAt": "2026-05-04T10:05:00Z",
+          "note": "Always needs a contrast clause. Don't use as 当然."
+        },
+        {
+          "id": "nb-3",
+          "type": "mistake",
+          "exerciseId": "ex-2",
+          "myAnswer": "A",
+          "correctAnswer": "B",
+          "reason": "Confused 当然 and 固然. 固然 needs a contrast clause.",
+          "savedAt": "2026-05-04T10:10:00Z"
+        }
+      ]
+    }
+  }
+}
