@@ -3,6 +3,18 @@
 import Link from "next/link";
 import type { LessonSummary } from "@/lib/types";
 
+const SECTIONS = [
+  "Warm-up",
+  "Passage",
+  "Vocabulary",
+  "Grammar Notes",
+  "Word Distinction",
+  "Exercises",
+  "Writing",
+  "Expansion",
+  "Notebook",
+];
+
 export default function LessonOverviewModal({
   lesson,
   onClose
@@ -21,34 +33,28 @@ export default function LessonOverviewModal({
           <button onClick={onClose} className="text-sm text-muted hover:text-ink">Close</button>
         </div>
 
-        <p className="mb-4 text-sm text-slate-700">
+        <p className="mb-5 text-sm text-muted">
           You will study passage reading, vocabulary nuance, grammar logic, near-synonym distinctions, exercises,
           writing, expansion, and notebook review in a teacher-style sequence.
         </p>
 
-        <ul className="mb-5 grid grid-cols-2 gap-2 text-sm text-slate-700">
-          {[
-            "Warm-up",
-            "Passage",
-            "Vocabulary",
-            "Grammar Notes",
-            "Word Distinction",
-            "Exercises",
-            "Writing",
-            "Expansion",
-            "Notebook"
-          ].map((item) => (
-            <li key={item} className="rounded border border-slate-200 bg-slate-50 px-3 py-2">
-              {item}
-            </li>
-          ))}
+        <ul className="mb-6 space-y-2">
+          {SECTIONS.map((section) => {
+            const done = lesson.progress > 0;
+            return (
+              <li key={section} className="flex items-center gap-3 text-sm">
+                <span className={`shrink-0 font-medium ${done ? "text-accent" : "text-stone-300"}`}>✓</span>
+                <span className={done ? "text-ink" : "text-muted"}>{section}</span>
+              </li>
+            );
+          })}
         </ul>
 
         <Link
           href={`/lessons/${lesson.id}`}
-          className="inline-flex rounded bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+          className="inline-flex rounded bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover"
         >
-          Start Lesson
+          {lesson.progress > 0 ? "Continue Lesson" : "Start Lesson"}
         </Link>
       </div>
     </div>

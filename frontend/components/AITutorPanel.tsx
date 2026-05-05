@@ -4,6 +4,7 @@ type Props = {
   currentFocus: string;
   response: string;
   onAsk: (query: string) => void;
+  onClose: () => void;
 };
 
 const actions = [
@@ -17,30 +18,44 @@ const actions = [
   "Save this"
 ];
 
-export default function AITutorPanel({ currentFocus, response, onAsk }: Props) {
+export default function AITutorPanel({ currentFocus, response, onAsk, onClose }: Props) {
   return (
-    <aside className="h-[calc(100vh-2rem)] rounded-lg border border-slate-200 bg-white p-4">
-      <h3 className="text-lg font-semibold">AI Tutor</h3>
-      <p className="mt-1 text-xs text-muted">Current focus: {currentFocus}</p>
-      <div className="mt-2 flex gap-2 text-xs">
-        <span className="rounded bg-slate-100 px-2 py-1">EN</span>
-        <span className="rounded bg-slate-100 px-2 py-1">中文</span>
-        <span className="rounded bg-slate-100 px-2 py-1">Both</span>
+    <div className="flex h-full flex-col p-4">
+      <div className="flex items-start justify-between">
+        <div>
+          <h3 className="text-lg font-semibold text-ink">AI Tutor</h3>
+          <p className="mt-0.5 text-xs text-muted">Focus: {currentFocus}</p>
+        </div>
+        <button
+          onClick={onClose}
+          className="flex h-7 w-7 items-center justify-center rounded-full text-muted hover:bg-card-hover hover:text-ink"
+          aria-label="Close AI Tutor"
+        >
+          ✕
+        </button>
       </div>
+
+      <div className="mt-2 flex gap-2 text-xs">
+        <span className="rounded bg-paper px-2 py-1 text-muted border border-stone-200">EN</span>
+        <span className="rounded bg-paper px-2 py-1 text-muted border border-stone-200">中文</span>
+        <span className="rounded bg-paper px-2 py-1 text-muted border border-stone-200">Both</span>
+      </div>
+
       <div className="mt-3 flex flex-wrap gap-2">
         {actions.map((action) => (
           <button
             key={action}
             onClick={() => onAsk(action)}
-            className="rounded border border-slate-200 px-2 py-1 text-xs hover:bg-slate-100"
+            className="rounded border border-stone-200 px-2 py-1 text-xs text-ink hover:bg-card-hover"
           >
             {action}
           </button>
         ))}
       </div>
-      <div className="mt-4 h-[72vh] overflow-y-auto rounded border border-slate-200 bg-slate-50 p-3 text-sm whitespace-pre-line">
+
+      <div className="mt-4 flex-1 overflow-y-auto rounded border border-stone-200 bg-paper p-3 text-sm text-ink whitespace-pre-line">
         {response}
       </div>
-    </aside>
+    </div>
   );
 }

@@ -10,7 +10,7 @@ export default function HomePage() {
         writing support, and a mock AI tutor in one focused interface.
       </p>
       <div className="mt-8">
-        <Link href="/dashboard" className="rounded bg-accent px-5 py-3 text-white hover:bg-slate-700">
+        <Link href="/dashboard" className="rounded bg-accent px-5 py-3 text-white hover:bg-accent-hover">
           Start Studying
         </Link>
       </div>

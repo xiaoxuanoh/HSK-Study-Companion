@@ -1,4 +1,4 @@
-import { mockLesson, mockLessonSummary } from "./mockData";
+import { mockLesson, mockCourseStructure } from "./mockData";
 import type { LessonData, LessonSummary } from "./types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
@@ -10,7 +10,7 @@ export async function getLessons(): Promise<LessonSummary[]> {
     const data = await res.json();
     return data.lessons as LessonSummary[];
   } catch {
-    return [mockLessonSummary];
+    return mockCourseStructure;
   }
 }
 
