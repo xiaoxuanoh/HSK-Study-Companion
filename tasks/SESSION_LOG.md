@@ -153,3 +153,42 @@ Installing `eslint` and `eslint-config-next` while the dev server was running ca
 - Modal description: still hardcoded generic sentence — needs `description` field in JSON + `LessonSummary` type
 - Section checklist completion: all gray ticks — wire to real progress data when Supabase is integrated
 - No commits made this session — user commits manually when asked
+
+## 2026-06-26 — Vocab Popup Repositioning & AI Tutor Chatbot Redesign
+
+### Vocab Popup (components/VocabPopup.tsx)
+- Changed from `absolute` (rendered at bottom of content area) to `fixed` positioned near the clicked word
+- Position is calculated from the word's bounding rect at click time (`getBoundingClientRect`)
+- Smart flip: if word is below 60% of viewport height, popup appears above the word; otherwise below
+- x-axis clamped to prevent bleed off right edge of screen
+- Width changed from fixed `w-80` to `w-fit min-w-[200px] max-w-xs` — shrinks to content, no dead whitespace
+- Fixed leftover `slate-*` color references to use project color system (`border-stone-200`, `text-muted`, `text-ink`)
+- Clicking "Explain More" now closes the popup (Option A) and hands off to the AI panel — avoids popup overlapping AI panel
+
+### AI Tutor Panel (components/AITutorPanel.tsx) — full redesign
+- Redesigned from static response box to chatbot-style message thread
+- Header: small "AI Tutor" label on top, large word title (`currentFocus`) below — word is now the focus, not the panel label
+- Scrollable message thread:
+  - Assistant messages: left-aligned with sage green left border (`border-l-2 border-accent`)
+  - User messages: right-aligned soft bubble (`bg-paper border border-stone-200`)
+- Auto-scrolls to latest message via `bottomRef`
+- Suggestion chips appear only after first message (contextual, not always visible)
+- Text input + Send button at bottom; Enter key also sends
+- Removed EN / 中文 / Both language toggle (was non-functional)
+
+### State changes (app/lessons/[id]/page.tsx)
+- Replaced `aiResponse: string` + `focus: string` with `messages: { role: 'user' | 'assistant', content: string }[]` + `currentFocus: string`
+- `onAsk` appends user message then assistant response to thread
+- `onExplain` (triggered by "Explain More") appends only the assistant response — no user bubble since it's word-click triggered, not user-typed
+- `handleAiClose` clears messages and resets `currentFocus` on panel close
+
+### Conversation behavior
+- Panel stays open + user clicks "Explain More" on another word: thread continues, focus updates to new word, new explanation appended
+- Panel closed then reopened: thread resets (clean state)
+- AI responses remain independent per word — no cross-word context bleed unless user explicitly asks
+
+### Deferred / Next Steps
+- Locked sections: discussed and deferred — needs Supabase progress tracking first
+- Modal description: still hardcoded — deferred
+- Section checklist completion: all gray — deferred until Supabase
+- No commits made this session — user commits manually when asked

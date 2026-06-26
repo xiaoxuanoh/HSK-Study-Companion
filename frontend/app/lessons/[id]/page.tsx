@@ -61,9 +61,10 @@ type ExerciseItem = {
 export default function LessonPage({ params }: { params: { id: string } }) {
   const [lesson, setLesson] = useState<LessonData | null>(null);
   const [section, setSection] = useState<SectionKey>("warmup");
-  const [aiResponse, setAiResponse] = useState("Select content or ask a quick action for mock teacher-style explanations.");
-  const [focus, setFocus] = useState("Lesson overview");
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [currentFocus, setCurrentFocus] = useState("");
   const [popupWord, setPopupWord] = useState<string | null>(null);
+  const [popupPos, setPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
   const [notebook, setNotebook] = useState<NotebookItem[]>([]);
   const [aiOpen, setAiOpen] = useState(false);
   const [iconPos, setIconPos] = useState<{ x: number; y: number } | null>(null);
@@ -120,9 +121,15 @@ export default function LessonPage({ params }: { params: { id: string } }) {
 
   const onAsk = async (query: string) => {
     if (!lesson) return;
-    setFocus(query);
+    setMessages((prev) => [...prev, { role: "user", content: query }]);
     const res = await askAI(lesson.id, query);
-    setAiResponse(res);
+    setMessages((prev) => [...prev, { role: "assistant", content: res }]);
+  };
+
+  const handleAiClose = () => {
+    setAiOpen(false);
+    setMessages([]);
+    setCurrentFocus("");
   };
 
   const saveNotebook = (item: NotebookItem) => setNotebook((prev) => [item, ...prev]);
@@ -144,7 +151,13 @@ export default function LessonPage({ params }: { params: { id: string } }) {
                   return (
                     <button
                       key={`${p.id}-${idx}`}
-                      onClick={() => setPopupWord(part)}
+                      onClick={(e) => {
+                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                        const x = Math.max(8, Math.min(rect.left, window.innerWidth - 328));
+                        const above = rect.bottom > window.innerHeight * 0.6;
+                        setPopupWord(part);
+                        setPopupPos({ x, y: above ? rect.top : rect.bottom, above });
+                      }}
                       className="rounded bg-amber-100 px-1 hover:bg-amber-200"
                     >
                       {part}
@@ -328,18 +341,25 @@ export default function LessonPage({ params }: { params: { id: string } }) {
             </div>
           )}
 
-          {vocabItem ? (
+          {vocabItem && popupPos ? (
             <VocabPopup
               item={vocabItem}
-              onClose={() => setPopupWord(null)}
+              position={popupPos}
+              onClose={() => { setPopupWord(null); setPopupPos(null); }}
               onExplain={() => {
-                onAsk(`Explain ${vocabItem.word} in this lesson context`);
-                setFocus(vocabItem.word);
+                const word = vocabItem.word;
+                setCurrentFocus(word);
                 setAiOpen(true);
+                setPopupWord(null);
+                setPopupPos(null);
+                askAI(lesson!.id, `Explain ${word} in this lesson context`).then((res) => {
+                  setMessages((prev) => [...prev, { role: "assistant", content: res }]);
+                });
               }}
               onSave={() => {
                 saveNotebook({ type: "vocabulary", word: vocabItem.word, note: `Saved from passage: ${vocabItem.word}` });
                 setPopupWord(null);
+                setPopupPos(null);
               }}
             />
           ) : null}
@@ -347,12 +367,12 @@ export default function LessonPage({ params }: { params: { id: string } }) {
 
         {/* AI Tutor panel — inline, pushes content when open */}
         {aiOpen && (
-          <div className="w-[340px] shrink-0 overflow-y-auto border-l border-stone-200 bg-card">
+          <div className="w-[340px] shrink-0 flex flex-col border-l border-stone-200 bg-card overflow-hidden">
             <AITutorPanel
-              currentFocus={focus}
-              response={aiResponse}
+              currentFocus={currentFocus}
+              messages={messages}
               onAsk={onAsk}
-              onClose={() => setAiOpen(false)}
+              onClose={handleAiClose}
             />
           </div>
         )}

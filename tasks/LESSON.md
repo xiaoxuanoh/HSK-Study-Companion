@@ -60,6 +60,30 @@ Future lessons should be added by creating new lesson JSON files in data/hsk{lev
 
 ---
 
+## VocabPopup Positioning Pattern
+
+The vocab popup uses `position: fixed` with coordinates from `getBoundingClientRect()` at click time.
+
+- `above` flag: `rect.bottom > window.innerHeight * 0.6` — popup appears above the word when near the bottom of the viewport
+- x clamp: `Math.max(8, Math.min(rect.left, window.innerWidth - 328))` — prevents right-edge bleed (328 = max-w-xs 320 + 8px margin)
+- Do NOT use `position: absolute` for this — the content panel is a scrollable container and absolute offsets would be wrong
+- Do NOT try to reposition based on `aiOpen` at click time — instead, close the popup when "Explain More" is clicked (Option A, confirmed by user)
+
+## AI Tutor Panel — Chatbot State Shape
+
+The AI tutor panel uses a messages array, not a single response string:
+```ts
+messages: { role: 'user' | 'assistant'; content: string }[]
+currentFocus: string  // the word or topic being studied
+```
+
+- `onExplain` (word clicked → Explain More): appends assistant message only — no user bubble
+- `onAsk` (suggestion chip or typed input): appends user message then assistant response
+- `handleAiClose`: clears both `messages` and `currentFocus` — panel resets on close
+- Panel stays open + new word explained: messages accumulate, `currentFocus` updates to new word
+
+---
+
 ## Current Prototype Status (Baseline)
 
 - FastAPI mock endpoints are implemented and running against JSON data.

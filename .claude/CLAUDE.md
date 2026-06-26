@@ -34,7 +34,8 @@
    - Any bugs fixed
    - Any errors/warnings
    - Exact next step
-5. If a project gotcha or repeated mistake is discovered, document it in `tasks/SESSION_LOG.md` or a dedicated docs file.
+5. If a project gotcha or repeated mistake is discovered or any flaws discovered and is fixed, document it in `tasks/lesson.md` or a dedicated docs file.
+
 
 ---
 
