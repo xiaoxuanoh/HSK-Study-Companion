@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import AITutorPanel from "@/components/AITutorPanel";
+import ExerciseCard, { type ExerciseItem } from "@/components/ExerciseCard";
+import GrammarPopup from "@/components/GrammarPopup";
 import VocabPopup from "@/components/VocabPopup";
 import { askAI, getLesson } from "@/lib/api";
 import type { LessonData } from "@/lib/types";
@@ -45,19 +47,15 @@ type GrammarItem = {
   type: string;
   coreMeaning: string;
   structure: string;
+  logic: Record<string, string>;
   tone: string;
   example: string;
+  breakdown: string[];
   commonMistake: string;
+  miniPractice: string;
 };
 type DistinctionRow = { dimension: string; word1: string; word2: string };
 type DistinctionGroup = { id: string; words: string[]; sharedMeaning: string; comparison: DistinctionRow[] };
-type ExerciseItem = {
-  id: string;
-  question: string;
-  options?: string[];
-  explanation: { whyCorrect: string };
-};
-
 export default function LessonPage({ params }: { params: { id: string } }) {
   const [lesson, setLesson] = useState<LessonData | null>(null);
   const [section, setSection] = useState<SectionKey>("warmup");
@@ -65,6 +63,8 @@ export default function LessonPage({ params }: { params: { id: string } }) {
   const [currentFocus, setCurrentFocus] = useState("");
   const [popupWord, setPopupWord] = useState<string | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
+  const [selectedGrammarId, setSelectedGrammarId] = useState<string | null>(null);
+  const [grammarPopupPos, setGrammarPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
   const [notebook, setNotebook] = useState<NotebookItem[]>([]);
   const [aiOpen, setAiOpen] = useState(false);
   const [iconPos, setIconPos] = useState<{ x: number; y: number } | null>(null);
@@ -134,9 +134,28 @@ export default function LessonPage({ params }: { params: { id: string } }) {
 
   const saveNotebook = (item: NotebookItem) => setNotebook((prev) => [item, ...prev]);
 
+  const handleSectionChange = (nextSection: SectionKey) => {
+    setSection(nextSection);
+    setPopupWord(null);
+    setPopupPos(null);
+    setSelectedGrammarId(null);
+    setGrammarPopupPos(null);
+  };
+
+  const getPopupPosition = (rect: DOMRect, maxWidth = 384) => {
+    const popupWidth = Math.min(maxWidth, window.innerWidth - 16);
+    const x = Math.max(8, Math.min(rect.left, window.innerWidth - popupWidth - 8));
+    const above = rect.bottom > window.innerHeight * 0.6;
+    return { x, y: above ? rect.top : rect.bottom, above };
+  };
+
   if (!lesson) return <main className="p-6 text-ink">Loading lesson...</main>;
 
   const vocabItem = popupWord ? vocabByWord[popupWord] : null;
+  const grammarItems = lesson.sections.grammar.items as GrammarItem[];
+  const selectedGrammar = selectedGrammarId
+    ? grammarItems.find((item) => item.id === selectedGrammarId) ?? null
+    : null;
 
   const renderPassage = () => {
     const highlights = lesson.sections.passage.vocabularyHighlights as Record<string, string>;
@@ -153,10 +172,10 @@ export default function LessonPage({ params }: { params: { id: string } }) {
                       key={`${p.id}-${idx}`}
                       onClick={(e) => {
                         const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                        const x = Math.max(8, Math.min(rect.left, window.innerWidth - 328));
-                        const above = rect.bottom > window.innerHeight * 0.6;
+                        setSelectedGrammarId(null);
+                        setGrammarPopupPos(null);
                         setPopupWord(part);
-                        setPopupPos({ x, y: above ? rect.top : rect.bottom, above });
+                        setPopupPos(getPopupPosition(rect));
                       }}
                       className="rounded bg-amber-100 px-1 hover:bg-amber-200"
                     >
@@ -194,7 +213,7 @@ export default function LessonPage({ params }: { params: { id: string } }) {
               {sectionOrder.map((key) => (
                 <button
                   key={key}
-                  onClick={() => setSection(key)}
+                  onClick={() => handleSectionChange(key)}
                   className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-100 ${
                     section === key
                       ? "bg-white font-semibold text-ink shadow-sm"
@@ -226,31 +245,70 @@ export default function LessonPage({ params }: { params: { id: string } }) {
           {section === "passage" && <div className="mt-4">{renderPassage()}</div>}
 
           {section === "vocabulary" && (
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {(lesson.sections.vocabulary.items as VocabItem[]).map((item) => (
-                <article key={item.id} className="rounded-lg border border-stone-200 bg-card p-4">
-                  <h3 className="text-xl font-semibold text-ink">{item.word}</h3>
-                  <p className="text-sm text-muted">{item.pinyin}</p>
-                  <p className="mt-1 text-xs text-muted">{item.partOfSpeech}</p>
-                  <p className="mt-2 text-sm text-ink">{item.simpleExplanation}</p>
-                  <p className="mt-2 text-sm text-muted">Example: {item.example}</p>
-                </article>
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded={popupWord === item.word}
+                  onClick={(event) => {
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    setSelectedGrammarId(null);
+                    setGrammarPopupPos(null);
+                    setPopupWord(item.word);
+                    setPopupPos(getPopupPosition(rect));
+                  }}
+                  className={`min-h-32 rounded-xl border p-4 text-left shadow-sm transition duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-paper ${
+                    popupWord === item.word
+                      ? "border-accent bg-white shadow-md"
+                      : "border-stone-200 bg-card"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-2xl font-semibold leading-none text-ink">{item.word}</h3>
+                      <p className="mt-2 text-sm text-muted">{item.pinyin}</p>
+                    </div>
+                    <span className="rounded-full bg-paper px-2 py-1 text-[11px] font-medium text-muted">
+                      {item.partOfSpeech}
+                    </span>
+                  </div>
+                  <p className="mt-4 line-clamp-2 text-sm leading-5 text-ink">{item.meaning}</p>
+                </button>
               ))}
             </div>
           )}
 
           {section === "grammar" && (
-            <div className="mt-4 space-y-4">
-              {(lesson.sections.grammar.items as GrammarItem[]).map((g) => (
-                <article key={g.id} className="rounded-lg border border-stone-200 bg-card p-4">
-                  <h3 className="text-lg font-semibold text-ink">{g.grammarPoint}</h3>
-                  <p className="mt-2 text-sm"><span className="font-medium">Type:</span> {g.type}</p>
-                  <p className="text-sm"><span className="font-medium">Core Meaning:</span> {g.coreMeaning}</p>
-                  <pre className="mt-2 rounded bg-paper border border-stone-200 p-2 text-sm">{g.structure}</pre>
-                  <p className="mt-2 text-sm"><span className="font-medium">Tone:</span> {g.tone}</p>
-                  <p className="text-sm"><span className="font-medium">Example:</span> {g.example}</p>
-                  <p className="mt-2 text-sm text-muted"><span className="font-medium">Common mistake:</span> {g.commonMistake}</p>
-                </article>
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {grammarItems.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded={selectedGrammarId === item.id}
+                  onClick={(event) => {
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    setPopupWord(null);
+                    setPopupPos(null);
+                    setSelectedGrammarId(item.id);
+                    setGrammarPopupPos(getPopupPosition(rect, 576));
+                  }}
+                  className={`min-h-44 rounded-xl border p-5 text-left shadow-sm transition duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-paper ${
+                    selectedGrammarId === item.id
+                      ? "border-accent bg-white shadow-md"
+                      : "border-stone-200 bg-card"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-xl font-semibold leading-snug text-ink">{item.grammarPoint}</h3>
+                    <span className="shrink-0 rounded-full bg-paper px-2 py-1 text-[11px] font-medium text-muted">
+                      {item.type}
+                    </span>
+                  </div>
+                  <p className="mt-5 line-clamp-3 text-sm leading-6 text-ink">{item.coreMeaning}</p>
+                </button>
               ))}
             </div>
           )}
@@ -286,21 +344,8 @@ export default function LessonPage({ params }: { params: { id: string } }) {
 
           {section === "exercises" && (
             <div className="mt-4 space-y-4">
-              {(lesson.sections.exercises.items as ExerciseItem[]).map((ex) => (
-                <article key={ex.id} className="rounded-lg border border-stone-200 bg-card p-4">
-                  <p className="whitespace-pre-line font-medium text-ink">{ex.question}</p>
-                  {ex.options ? (
-                    <ul className="mt-3 space-y-1 text-sm">
-                      {ex.options.map((opt) => (
-                        <li key={opt} className="rounded border border-stone-200 bg-paper px-2 py-1 text-ink">{opt}</li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  <div className="mt-3 rounded bg-paper border border-stone-200 p-3 text-sm text-ink">
-                    <p><span className="font-medium">Why correct:</span> {ex.explanation.whyCorrect}</p>
-                    <p className="mt-2 text-muted">This question tests nuance and sentence logic, not direct translation.</p>
-                  </div>
-                </article>
+              {(lesson.sections.exercises.items as ExerciseItem[]).map((item) => (
+                <ExerciseCard key={item.id} item={item} />
               ))}
             </div>
           )}
@@ -360,6 +405,17 @@ export default function LessonPage({ params }: { params: { id: string } }) {
                 saveNotebook({ type: "vocabulary", word: vocabItem.word, note: `Saved from passage: ${vocabItem.word}` });
                 setPopupWord(null);
                 setPopupPos(null);
+              }}
+            />
+          ) : null}
+
+          {selectedGrammar && grammarPopupPos ? (
+            <GrammarPopup
+              item={selectedGrammar}
+              position={grammarPopupPos}
+              onClose={() => {
+                setSelectedGrammarId(null);
+                setGrammarPopupPos(null);
               }}
             />
           ) : null}

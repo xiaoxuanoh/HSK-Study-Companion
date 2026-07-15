@@ -382,8 +382,22 @@
         {
           "id": "ex-1",
           "type": "fill_in_the_blank",
-          "question": "选择合适的词填空：忽略 / 忽视\n\n1. 他太忙了，_____ 了孩子的感受。\n2. 政府不能_____ 环境污染的问题。",
-          "answers": { "1": "忽略", "2": "忽视" },
+          "prompt": "选择合适的词填空",
+          "wordBank": ["忽略", "忽视"],
+          "sentences": [
+            {
+              "id": "1",
+              "before": "他太忙了，",
+              "after": "了孩子的感受。",
+              "answer": "忽略"
+            },
+            {
+              "id": "2",
+              "before": "政府不能",
+              "after": "环境污染的问题。",
+              "answer": "忽视"
+            }
+          ],
           "explanation": {
             "1": {
               "whyCorrect": "忽略 is correct because being too busy caused an unintentional oversight — he didn't notice he was neglecting the child's feelings.",
@@ -399,8 +413,14 @@
         {
           "id": "ex-2",
           "type": "multiple_choice",
-          "question": "选择合适的词完成句子：\n\n这件事_____很复杂，但我们还是要认真解决。",
-          "options": ["A. 当然", "B. 固然", "C. 虽然", "D. 既然"],
+          "prompt": "选择合适的词完成句子",
+          "sentence": "这件事_____很复杂，但我们还是要认真解决。",
+          "options": [
+            { "id": "A", "text": "当然" },
+            { "id": "B", "text": "固然" },
+            { "id": "C", "text": "虽然" },
+            { "id": "D", "text": "既然" }
+          ],
           "correctAnswer": "B",
           "explanation": {
             "whyCorrect": "固然 is correct because it acknowledges the complexity (A) while signaling that a contrasting point follows (we still need to solve it = B). The sentence has a concession + contrast structure.",
@@ -416,12 +436,12 @@
         {
           "id": "ex-3",
           "type": "multiple_choice",
-          "question": "下列句子中，'郑重'使用正确的是哪一句？",
+          "prompt": "下列句子中，'郑重'使用正确的是哪一句？",
           "options": [
-            "A. 他郑重地笑了笑，表示同意。",
-            "B. 她郑重地说：'这件事非常重要，请大家认真对待。'",
-            "C. 他郑重地吃完了饭。",
-            "D. 她郑重地走进了超市。"
+            { "id": "A", "text": "他郑重地笑了笑，表示同意。" },
+            { "id": "B", "text": "她郑重地说：'这件事非常重要，请大家认真对待。'" },
+            { "id": "C", "text": "他郑重地吃完了饭。" },
+            { "id": "D", "text": "她郑重地走进了超市。" }
           ],
           "correctAnswer": "B",
           "explanation": {
