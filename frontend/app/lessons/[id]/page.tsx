@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { use, useEffect, useMemo, useRef, useState } from "react";
 import AITutorPanel from "@/components/AITutorPanel";
 import ExerciseCard, { type ExerciseItem } from "@/components/ExerciseCard";
 import GrammarPopup from "@/components/GrammarPopup";
@@ -56,7 +56,8 @@ type GrammarItem = {
 };
 type DistinctionRow = { dimension: string; word1: string; word2: string };
 type DistinctionGroup = { id: string; words: string[]; sharedMeaning: string; comparison: DistinctionRow[] };
-export default function LessonPage({ params }: { params: { id: string } }) {
+export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: lessonId } = use(params);
   const [lesson, setLesson] = useState<LessonData | null>(null);
   const [section, setSection] = useState<SectionKey>("warmup");
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
@@ -77,10 +78,6 @@ export default function LessonPage({ params }: { params: { id: string } }) {
     originY: 0,
     moved: false,
   });
-
-  useEffect(() => {
-    setIconPos({ x: window.innerWidth - 72, y: window.innerHeight - 72 });
-  }, []);
 
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
@@ -104,11 +101,11 @@ export default function LessonPage({ params }: { params: { id: string } }) {
   }, []);
 
   useEffect(() => {
-    getLesson(params.id).then((data) => {
+    getLesson(lessonId).then((data) => {
       setLesson(data);
-      setNotebook(data.sections.notebook.savedItems || []);
+      setNotebook((data.sections.notebook.savedItems as NotebookItem[]) || []);
     });
-  }, [params.id]);
+  }, [lessonId]);
 
   const vocabByWord = useMemo(() => {
     if (!lesson) return {} as Record<string, VocabItem>;
@@ -435,18 +432,21 @@ export default function LessonPage({ params }: { params: { id: string } }) {
       </div>
 
       {/* Draggable AI icon — hidden when panel is open */}
-      {iconPos && !aiOpen && (
+      {!aiOpen && (
         <div
           className="fixed z-50 flex h-12 w-12 cursor-grab items-center justify-center rounded-full shadow-lg select-none text-white text-xl transition-colors duration-150"
-          style={{ left: iconPos.x, top: iconPos.y, backgroundColor: "#7A9E7E" }}
+          style={iconPos
+            ? { left: iconPos.x, top: iconPos.y, backgroundColor: "#7A9E7E" }
+            : { right: 24, bottom: 24, backgroundColor: "#7A9E7E" }}
           onMouseDown={(e) => {
             e.preventDefault();
+            const rect = e.currentTarget.getBoundingClientRect();
             dragState.current = {
               active: true,
               startX: e.clientX,
               startY: e.clientY,
-              originX: iconPos.x,
-              originY: iconPos.y,
+              originX: rect.left,
+              originY: rect.top,
               moved: false,
             };
           }}
