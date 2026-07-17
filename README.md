@@ -2,7 +2,7 @@
 
 A self-study website for HSK learners that provides teacher-style explanations, near-synonym reasoning, grammar breakdowns, and AI-assisted study support.
 
-**Current Status:** Polished first-draft prototype
+**Current Status:** Polished interactive prototype; Next.js security upgrade completed and verified
 **Current Focus:** HSK 6 Lesson 1 — 孩子给我们的启示 (An epiphany from the children)
 
 ---
@@ -15,7 +15,7 @@ Textbook and workbook materials for HSK are available, but proper explanations, 
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Next.js 14 + React + TypeScript + Tailwind CSS |
+| Frontend | Next.js 16.2.10 + React 19.2.7 + TypeScript 5.9.3 + Tailwind CSS |
 | Backend | FastAPI + Python |
 | Data (now) | Mock JSON files |
 | Auth (future) | Supabase Auth |
@@ -55,6 +55,12 @@ Textbook and workbook materials for HSK are available, but proper explanations, 
 - Payment
 - Production deployment
 
+## Branch Status
+
+- `main` contains the tested framework upgrade and remains the active website branch.
+- `feature/supabase-integration` contains a mock-by-default Supabase foundation and is intentionally paused.
+- No live Supabase project has been linked or modified, and existing website routes do not depend on Supabase.
+
 ## Project Structure
 
 ```
@@ -80,4 +86,12 @@ python run.py
 cd frontend
 npm install
 npm run dev
+```
+
+For a production-like local preview, stop any running development server first, then run:
+
+```bash
+cd frontend
+npm run build
+npm run start
 ```

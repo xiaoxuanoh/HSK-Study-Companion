@@ -1,6 +1,6 @@
 # Technical Plan
 
-## Frontend (Next.js 14 + React + TypeScript + Tailwind CSS)
+## Frontend (Next.js 16.2.10 + React 19.2.7 + TypeScript 5.9.3 + Tailwind CSS)
 
 ### Pages
 - `/` — Landing page
@@ -17,7 +17,7 @@
 - Section components: `PassageSection`, `VocabularySection`, `GrammarSection`, `WordDistinctionSection`, `ExercisesSection`, `WritingSection`, `WarmupSection`, `NotebookSection`, `ExpansionSection`
 
 ### State Management
-- React `useState` and `useContext` for current section, selected item, AI panel content, notebook items
+- React local state for current section, selected item, exercise answers, AI panel content, and notebook items
 - No external state library needed for the prototype
 
 ### API
@@ -59,6 +59,14 @@ backend/app/
 - AI responses are mock strings returned by `services/ai_service.py`
 - Notebook is in-memory dict (resets on server restart)
 
+## Current Framework Baseline
+
+- Next.js 16 uses asynchronous dynamic-route parameters and Turbopack for production builds.
+- Turbopack's root is set to the repository root so `frontend/lib/mockData.ts` can import shared lesson JSON from `data/`.
+- ESLint uses the flat configuration in `frontend/eslint.config.mjs`; `next lint` was removed in Next.js 16.
+- A package override keeps every PostCSS copy on 8.5.19, including Next.js's transitive dependency.
+- The verified baseline passes ESLint, TypeScript, the production build, the production dependency audit, and the backend health test.
+
 ## Future Phases
 
 ### Real AI Phase
@@ -68,13 +76,23 @@ backend/app/
 - Frontend displays streamed or batched response
 
 ### Supabase Auth Phase
-- Add Supabase Auth client to frontend
-- Protect `/dashboard` and `/lessons/*` routes
-- Backend validates JWT from Supabase
+- Use email-and-password signup and sign-in.
+- After email verification, collect a nickname/display name on a separate profile page.
+- Protect `/dashboard` and `/lessons/*` only after the standalone authentication flow is stable.
+- Backend validates Supabase JWTs before accepting protected persistence writes.
 
 ### Supabase Postgres Phase
-- Replace JSON file loading with Supabase Postgres queries
-- Tables: profiles, lessons, lesson_sections, vocabulary, synonym_groups, user_progress, notebook_items, exercise_attempts, ai_messages
+- Keep lesson content in JSON initially.
+- Persist learner-owned profiles and notebook items first, followed by progress, writing versions/feedback, and exercise attempts.
+- Require explicit grants, per-user Row Level Security, and cross-user isolation tests before connecting UI features.
+
+### Paused Supabase Foundation
+
+- The isolated foundation is saved at `feature/supabase-integration` commit `3cbccf6`.
+- It includes mock-by-default configuration, local Supabase files, a profiles/notebook migration, and standalone signup, verification, nickname, and sign-in pages.
+- The landing page, dashboard, lesson routes, JSON loading, and FastAPI endpoints were left unchanged.
+- Local migration execution is still pending because the initial Docker image download timed out.
+- No remote Supabase project is linked or modified. Resume only with explicit approval, and first bring the latest `main` framework baseline into the feature branch.
 
 ### Supabase Storage Phase
 - Allow users to upload PDFs and scans

@@ -1,5 +1,69 @@
 # Session Log
 
+## 2026-07-17 — Documentation Alignment and Review
+
+- Updated the root and frontend READMEs, technical plan, Claude guide, Codex agent instructions, session log, and accumulated lessons to match the current repository.
+- Recorded Next.js 16.2.10, React 19.2.7, TypeScript 5.9.3, ESLint 9 flat configuration, and the PostCSS security override.
+- Clarified that `main`/`origin/main` contain the verified framework upgrade at `e41f637`.
+- Clarified that the Supabase foundation is paused separately at `feature/supabase-integration` commit `3cbccf6` and has not modified a live Supabase project.
+- Kept the original `docs/superpowers/` implementation plan unchanged as a historical snapshot.
+- Reviewed the complete documentation diff against the current branches, dependency manifests, Next.js configuration, ESLint configuration, and installed PostCSS tree.
+- Resolved conflicting validation guidance so active development uses lint and TypeScript checks, while production builds run only after the development server is stopped.
+- `git diff --check` passed.
+
+### Next Step
+
+- Continue product refinement with a focused mobile and accessibility review; keep Supabase paused until explicitly resumed.
+
+## 2026-07-16 — Next.js 16 Security Upgrade
+
+- Saved the unfinished Supabase foundation on its isolated feature branch before touching the framework baseline.
+- Created `chore/nextjs-security-upgrade` from unchanged `main` and upgraded:
+  - Next.js 14.2.18 → 16.2.10
+  - React and React DOM 18.3.1 → 19.2.7
+  - TypeScript 5.6.3 → 5.9.3
+  - React, React DOM, and Node type definitions
+  - ESLint to supported 9.39.5 with `eslint.config.mjs`
+  - PostCSS, Autoprefixer, and Tailwind CSS 3 patch versions
+- Replaced removed `next lint` usage with the ESLint CLI.
+- Updated the dynamic lesson route to unwrap promised `params` with React `use()`.
+- Added a repository-level Turbopack root so frontend fallback code can continue importing lesson JSON from `data/`.
+- Added a global PostCSS override to patch Next.js's older nested PostCSS dependency.
+- Resolved stricter lint findings by removing a synchronous state update from the draggable AI icon effect and replacing an explicit `any` lesson-section type.
+- Validation completed:
+  - `npm audit --omit=dev` — 0 vulnerabilities
+  - `npm run lint` — passed
+  - `npx tsc --noEmit` — passed
+  - `npm run build` — passed; `/`, `/dashboard`, and `/lessons/[id]` generated successfully
+  - Backend test — 1 passed
+- Manually previewed the production frontend with the backend running. Navigation, lessons, typed exercise answers, and feedback behaved as before the upgrade.
+- Fast-forwarded the tested upgrade into `main` and pushed commit `e41f637` to `origin/main`.
+
+### Next Step
+
+- Continue product/UI refinement from the upgraded `main`; keep Supabase paused until explicitly resumed.
+
+## 2026-07-16 — Isolated Supabase Foundation Paused
+
+- Saved the mock-by-default Supabase foundation at `feature/supabase-integration` commit `3cbccf6`.
+- The isolated branch contains local Supabase configuration, a profiles/notebook migration, and standalone email/password signup, six-digit verification, nickname setup, and sign-in pages.
+- Existing landing, dashboard, lesson, JSON, and FastAPI flows were not changed or protected.
+- No remote Supabase project was linked or modified.
+- Local migration execution and isolation testing remain pending because the first Docker image download timed out.
+- Supabase implementation is intentionally paused; the branch was not merged or pushed as part of the Next.js upgrade.
+
+### Next Step
+
+- If Supabase is resumed later, first integrate the latest `main` into the feature branch, then complete local migration, RLS, and cross-user isolation tests before connecting notebook persistence.
+
+## 2026-07-14 — Interactive Lesson UI Checkpoint
+
+- Added compact responsive vocabulary cards that open detailed vocabulary popups.
+- Added compact grammar cards with a wider, scroll-safe detail popup.
+- Added interactive fill-in-the-blank and multiple-choice exercises with independent answer state, submission feedback, reasoning, and retry actions.
+- Added keyboard focus/dialog behavior and popup dismissal improvements.
+- Saved the completed UI checkpoint on `main` before beginning the isolated Supabase work.
+
 ## 2026-05-04 — Project Setup
 
 - Repository created: HSK-Study-Companion

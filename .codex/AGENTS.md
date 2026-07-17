@@ -6,7 +6,7 @@ Build a polished first-draft HSK self-study website that provides teacher-style 
 
 ## Current Priority
 
-Build and iterate on the first prototype. Focus on clean structure, realistic mock interactions, and a lesson study flow that can be extended to future lessons.
+Continue refining the tested prototype's UI, lesson flow, mobile layout, writing experience, and accessibility. Supabase work is paused on `feature/supabase-integration`; do not merge, extend, or activate it unless the user explicitly resumes that work.
 
 ## Build Principles
 
@@ -15,6 +15,7 @@ Build and iterate on the first prototype. Focus on clean structure, realistic mo
 - Keep frontend and backend modular and clean.
 - Do not overbuild. YAGNI. No features beyond the current spec.
 - Structure code so Supabase Auth, Supabase Postgres, Supabase Storage, and real AI API can be added later without a full rewrite.
+- Keep lesson data and study routes working in mock mode. No live Supabase project has been linked or modified.
 
 ## Explanation Philosophy
 
@@ -41,8 +42,8 @@ See docs/explanation-style.md for full templates.
 
 ## Do Not Build Yet
 
-- Real authentication (Supabase Auth planned)
-- Real database (Supabase Postgres planned)
+- Real authentication (a mock-by-default foundation is paused on a separate branch)
+- Real database activation or migration application
 - Real AI API calls
 - OCR or PDF parsing
 - File upload
@@ -53,7 +54,7 @@ See docs/explanation-style.md for full templates.
 
 - TypeScript strict mode in frontend
 - Pydantic models in backend
-- No inline styles — use Tailwind classes
+- Use Tailwind classes for static styling. Inline styles are allowed only for runtime-computed values such as draggable or popup coordinates.
 - Components should be small and focused
 - Services layer in backend separates data from routes
 - Mock data lives in data/ and is loaded by backend services
@@ -61,3 +62,9 @@ See docs/explanation-style.md for full templates.
 ## Git Rule
 
 **Do NOT commit automatically.** Only create git commits when the user explicitly asks. After making changes, summarize what was changed and wait for review.
+
+## Current Branch State
+
+- `main` and `origin/main` contain the tested Next.js 16 security upgrade at `e41f637`.
+- `feature/supabase-integration` contains the paused Supabase foundation at `3cbccf6` and is not part of `main`.
+- Do not assume pushing `main` includes or activates Supabase.

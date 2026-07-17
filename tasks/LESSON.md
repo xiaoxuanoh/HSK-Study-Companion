@@ -60,6 +60,18 @@ Future lessons should be added by creating new lesson JSON files in data/hsk{lev
 
 ---
 
+## Next.js 16 Upgrade Patterns
+
+- Next.js 16 removes `next lint`. Use the ESLint CLI through `npm run lint`, backed by `frontend/eslint.config.mjs`.
+- Keep ESLint on the latest compatible 9.x release until all plugins bundled by `eslint-config-next` support ESLint 10. The top-level peer range alone is not sufficient; inspect transitive plugin peer ranges.
+- App Router dynamic `params` are promises. Client pages should type them as `Promise<...>` and unwrap them with React `use()`.
+- Turbopack restricts module resolution to its configured root. Because lesson JSON lives outside `frontend/`, keep `turbopack.root` pointed at the repository root in `next.config.mjs`.
+- Next.js 16.2.10 pins an older nested PostCSS copy. Keep the global `postcss` override aligned with the direct patched PostCSS version and verify with `npm ls postcss` plus `npm audit --omit=dev`.
+- After replacing framework dependencies, stop old dev processes and use a clean install. Errors such as missing `next-flight-client-entry-loader` during hot reload usually indicate the old server is observing a partially replaced dependency tree.
+- A production preview is `npm run build` followed by `npm run start`; do not judge a major upgrade from a hot-reloaded process that started before the package change.
+
+---
+
 ## VocabPopup Positioning Pattern
 
 The vocab popup uses `position: fixed` with coordinates from `getBoundingClientRect()` at click time.

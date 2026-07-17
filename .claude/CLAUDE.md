@@ -8,21 +8,22 @@
 3. Read `frontend/package.json` scripts and `backend/requirements.txt` – align commands with actual repo tooling.
 4. Check whether environment files exist without printing secrets:
    - `backend/.env.example`
-   - `frontend/.env.local.example`
+   - Supabase environment examples exist only on `feature/supabase-integration` while that work is paused.
    - Do not print `.env` or `.env.local` values.
 5. Run baseline checks only when dependencies are installed:
-   - Frontend: `cd frontend && npm run lint && npm run build`
+   - Frontend: `cd frontend && npm run lint && npx tsc --noEmit`; stop any running development server before `npm run build`
    - Backend: `cd backend && python -m pytest tests/` if pytest and dependencies are installed.
 
 ### During Session
 1. Write a **3-step micro-plan** for any new work.
 2. Execute exactly **one phase**.
 3. Run checks before marking tasks complete:
-   - `cd frontend && npm run lint && npm run build`
+   - During active development: `cd frontend && npm run lint && npx tsc --noEmit`
+   - For final validation: stop the development server, then run `cd frontend && npm run build`
 
 ### End of Session
 1. Run checks when possible:
-   - `cd frontend && npm run lint && npm run build`
+   - Frontend: `cd frontend && npm run lint && npx tsc --noEmit`; stop the development server before `npm run build`
    - `cd backend && python -m pytest tests/`
 2. Verify one happy path:
    - Open app → homepage → dashboard → lesson overview modal → lesson page → passage/vocabulary/AI tutor panel renders.
@@ -44,7 +45,7 @@
 **See `tasks/LESSON.md` for important patterns.**
 
 Key things to know:
-- **No inline styles** — use Tailwind classes only; inline styles are not allowed
+- **Tailwind first** — use classes for static styling; reserve inline styles for runtime-computed positions such as draggable and popup coordinates
 - **TypeScript strict mode** in frontend — avoid `any`, always type your props and API responses
 - **Mock data is the source of truth now** — all lesson content loads from `data/hsk6/lesson-01.json` via the backend; do not hardcode content in components
 - **Backend is designed for future Supabase migration** — keep service layer clean; do not reach into data files from route handlers directly
@@ -75,8 +76,8 @@ A full-stack web app that:
 # Tech Stack
 
 ## Core
-- **Next.js 14 + React + TypeScript** (frontend, `/frontend`)
-- **Tailwind CSS** — no inline styles; classes only
+- **Next.js 16.2.10 + React 19.2.7 + TypeScript 5.9.3** (frontend, `/frontend`)
+- **Tailwind CSS** — classes for static styling; runtime coordinate styles are permitted
 - **FastAPI + Python + Pydantic** (backend, `/backend`)
 
 ## Data Layer (Now)
@@ -94,7 +95,7 @@ A full-stack web app that:
 - Currently: mock responses from `backend/app/services/ai_service.py`
 
 ## Testing
-- **Frontend**: `npm run lint` (ESLint + TypeScript)
+- **Frontend**: `npm run lint`, `npx tsc --noEmit`, and `npm run build`
 - **Backend**: `pytest` in `backend/tests/`
 
 ---
@@ -163,7 +164,7 @@ HSK-Study-Companion/
 - **YAGNI** — do not overbuild; no features beyond the current spec
 
 ## Before Marking Done
-- **Run checks**: `cd frontend && npm run lint && npm run build`
+- **Run checks**: `cd frontend && npm run lint && npx tsc --noEmit`; stop the development server before `npm run build`
 - **Verify one happy path**: Landing → Dashboard → Lesson modal → Lesson study page → click vocabulary
 - **Test one edge case**: backend down, empty notebook, missing JSON field
 - **Update `tasks/SESSION_LOG.md`** with commands run and observed behavior
@@ -179,7 +180,7 @@ HSK-Study-Companion/
 - **Documentation first** — keep docs updated as the project evolves; update `tasks/SESSION_LOG.md` and relevant `docs/` files when anything changes
 
 ## Code Quality
-- No inline styles — Tailwind only
+- Use Tailwind for static styling; inline styles are limited to runtime-computed coordinates or other values that cannot be expressed statically
 - TypeScript strict mode — type all props, API responses, and service return values
 - Pydantic models for all backend request/response shapes
 - Components should be small and focused — split sections into separate components
@@ -228,6 +229,15 @@ Responses are effectively classified by source:
 - Never hardcode lesson content in components — always fetch from backend
 - Notebook state will move to Supabase Postgres; keep notebook logic isolated so it can be extracted
 
+## Current Framework and Branch Baseline
+
+- `main` and `origin/main` contain the verified Next.js 16 upgrade at `e41f637`.
+- ESLint uses `frontend/eslint.config.mjs`; Next.js 16 no longer provides `next lint`.
+- Dynamic route parameters are promises in Next.js 16; the lesson page unwraps them with React `use()`.
+- Turbopack root is configured at the repository level so frontend fallback code can import `data/hsk6/lesson-01.json`.
+- `feature/supabase-integration` is paused at `3cbccf6`. It is mock-by-default, is not merged into `main`, and has not changed a live Supabase project.
+- If Supabase work resumes, first integrate the latest `main` into that feature branch and rerun its full validation.
+
 ## Error Handling
 - Frontend fetches wrapped in try/catch; fall back to `lib/mockData.ts` on failure
 - Backend AI service wrapped in try/catch; return structured mock on failure
@@ -261,20 +271,22 @@ Responses are effectively classified by source:
 ✅ AI tutor panel responds to questions with mock explanations
 ✅ Notebook section shows saved items; add/remove works in local state
 ✅ App remains usable if backend is offline (frontend mock fallback)
-✅ No inline styles — Tailwind classes only throughout
+✅ Static styling uses Tailwind; inline styles are limited to runtime positioning
 
 ---
 
 # Notes for Future Work
 
 1. **Supabase Auth**
-   - Add Supabase Auth client to frontend
-   - Protect `/dashboard` and `/lessons/*` routes
-   - Backend validates JWT from Supabase on protected endpoints
+   - Resume the isolated mock-by-default foundation only after explicit approval
+   - Use email/password signup, six-digit email verification, and separate nickname setup
+   - Protect `/dashboard` and `/lessons/*` only after standalone auth is stable
+   - Backend validates JWT from Supabase on protected persistence endpoints
 
 2. **Supabase Postgres**
-   - Replace JSON file loading in `lesson_service.py` with Supabase queries
-   - Tables: `profiles`, `lessons`, `lesson_sections`, `vocabulary`, `synonym_groups`, `user_progress`, `notebook_items`, `exercise_attempts`, `ai_messages`
+   - Keep lesson content in JSON during the first persistence phase
+   - Connect profiles and notebook items first, followed by progress, writing, and submitted exercise attempts
+   - Move lesson content into database tables only in a later, separately reviewed phase
 
 3. **Supabase Storage**
    - Allow users to upload PDFs/scans
@@ -307,8 +319,8 @@ Responses are effectively classified by source:
 
 These are explicitly out of scope until the prototype phase is complete:
 
-- **Real authentication** — Supabase Auth is planned but not now
-- **Real database** — Supabase Postgres is planned but not now
+- **Activated authentication** — the isolated Supabase foundation is paused and must not affect current routes
+- **Live database changes** — do not link or migrate a remote Supabase project without explicit approval
 - **Real AI API calls** — backend AI service returns mock strings only
 - **OCR or PDF parsing**
 - **File upload**
