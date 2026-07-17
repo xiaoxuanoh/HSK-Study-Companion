@@ -1,5 +1,30 @@
 # Session Log
 
+## 2026-07-17 — Upgraded Baseline Reconfirmed
+
+- Reconfirmed the Next.js 16 baseline without changing application code.
+- Frontend validation completed:
+  - `npm run lint` — passed
+  - `npx tsc --noEmit` — passed
+  - `npm run build` — passed; `/`, `/dashboard`, and `/lessons/[id]` generated successfully
+  - `npm audit --omit=dev` — 0 vulnerabilities
+- Backend validation completed:
+  - `python -m pytest tests/` — 1 passed
+- Production-preview route checks returned HTTP 200 for `/`, `/dashboard`, and `/lessons/hsk6-lesson-01`.
+- Backend checks returned HTTP 200 for `/health` and `/api/lessons/hsk6-lesson-01`, with the expected lesson ID and title.
+- Verified the backend-offline edge case in headless Chrome: with FastAPI stopped, the lesson rendered from local fallback data with the expected title and section labels.
+- Restored the frontend and backend development servers on ports 3000 and 8000 after validation.
+
+### Environment Notes
+
+- The first production build attempt was blocked by the managed sandbox because Turbopack's PostCSS worker could not bind an internal local port; the same build passed with local-process permission.
+- The first npm audit attempt was blocked by sandbox DNS; it passed with registry network access.
+- Headless Chrome wrote the expected offline-fallback DOM but did not exit by itself, so the completed browser process was terminated after its output was inspected.
+
+### Next Step
+
+- Begin a focused mobile and accessibility review of the lesson-study experience.
+
 ## 2026-07-17 — Documentation Alignment and Review
 
 - Updated the root and frontend READMEs, technical plan, Claude guide, Codex agent instructions, session log, and accumulated lessons to match the current repository.
