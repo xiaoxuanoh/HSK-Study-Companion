@@ -14,6 +14,11 @@ Landing Page
                                 ├─> Section list with recommended order
                                 └─> [Start Lesson] button
                                       └─> Lesson Study Page (three-panel)
+                                            ├─> Lesson Toolbar
+                                            │     ├─> Dashboard
+                                            │     ├─> Current lesson information
+                                            │     └─> My Notebook (course-wide page)
+                                            │
                                             ├─> Left Panel: Section Navigation
                                             │     ├─> Warm-up
                                             │     ├─> Passage
@@ -22,8 +27,7 @@ Landing Page
                                             │     ├─> Word Distinction
                                             │     ├─> Exercises
                                             │     ├─> Writing / Application
-                                            │     ├─> Expansion
-                                            │     └─> Notebook
+                                            │     └─> Expansion
                                             │
                                             ├─> Middle Panel: Section Content
                                             │     └─> (changes based on left nav selection)
@@ -71,8 +75,8 @@ AI Tutor Panel (right panel)
 ```
 Any section
   └─> [Save] button on vocabulary card / grammar card / exercise explanation
-        └─> Item added to Notebook section (local mock state)
-              └─> Notebook section shows:
+        └─> Item added to course-wide My Notebook workspace
+              └─> Dedicated Notebook page shows:
                     ├─> Saved vocabulary
                     ├─> Saved grammar points
                     ├─> Saved wrong answers

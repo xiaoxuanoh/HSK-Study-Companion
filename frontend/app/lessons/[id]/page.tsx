@@ -17,8 +17,7 @@ const sectionOrder = [
   "wordDistinction",
   "exercises",
   "writing",
-  "expansion",
-  "notebook"
+  "expansion"
 ] as const;
 
 const lessonSectionStorageKey = (lessonId: string) => `hsk-study-companion:lesson-section:${lessonId}`;
@@ -90,7 +89,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [popupPos, setPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
   const [selectedGrammarId, setSelectedGrammarId] = useState<string | null>(null);
   const [grammarPopupPos, setGrammarPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
-  const [notebook, setNotebook] = useState<NotebookItem[]>([]);
+  const [, setNotebook] = useState<NotebookItem[]>([]);
   const [aiOpen, setAiOpen] = useState(false);
   const [iconPos, setIconPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -217,38 +216,32 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   return (
     <div className="flex flex-col h-screen">
       {/* Lesson navigation and identity */}
-      <header className="shrink-0 border-b border-stone-200 bg-paper">
-        <div className="min-w-0 px-4 py-3 sm:px-6">
+      <header className="sticky top-0 z-40 shrink-0 border-b border-stone-200 bg-paper px-4 py-4 sm:px-6">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
           <p className="text-xs text-muted">Lesson {lesson.lesson.number}</p>
-          <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-3">
-            <h1 className="truncate text-lg font-semibold text-ink sm:text-xl">{lesson.lesson.titleChinese}</h1>
-            <span className="truncate text-sm text-muted">{lesson.lesson.titleEnglish}</span>
+            <h1 className="mt-1 truncate text-2xl font-semibold text-ink sm:text-3xl">
+              {lesson.lesson.titleChinese}
+            </h1>
+            <p className="mt-1 truncate text-sm text-muted">{lesson.lesson.titleEnglish}</p>
           </div>
-        </div>
 
-        <nav aria-label="Lesson navigation" className="overflow-x-auto border-t border-stone-200 px-4 sm:px-6">
-          <div className="flex min-w-max items-stretch">
+          <nav aria-label="Lesson navigation" className="flex shrink-0 flex-wrap items-center gap-2">
             <Link
               href="/dashboard"
-              className="inline-flex min-h-11 items-center gap-2 border-r border-stone-200 px-3 text-sm font-medium text-ink transition-colors hover:bg-card-hover focus-visible:bg-card-hover sm:px-4"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-300 bg-card px-4 text-sm font-medium text-ink transition-colors hover:bg-card-hover"
             >
-              <span aria-hidden="true" className="text-lg leading-none">←</span>
+              <span aria-hidden="true">←</span>
               <span>Dashboard</span>
             </Link>
-            <button
-              type="button"
-              aria-current={section === "notebook" ? "page" : undefined}
-              onClick={() => handleSectionChange("notebook")}
-              className={`inline-flex min-h-11 items-center border-r border-stone-200 px-3 text-sm font-medium transition-colors sm:px-4 ${
-                section === "notebook"
-                  ? "bg-white text-ink shadow-[inset_0_-2px_0_#7A9E7E]"
-                  : "text-muted hover:bg-card-hover hover:text-ink focus-visible:bg-card-hover"
-              }`}
+            <Link
+              href="/notebook"
+              className="inline-flex min-h-11 items-center rounded-lg border border-stone-300 bg-card px-4 text-sm font-medium text-ink transition-colors hover:bg-card-hover"
             >
               My Notebook
-            </button>
-          </div>
-        </nav>
+            </Link>
+          </nav>
+        </div>
       </header>
 
       {/* Body: nav + content + optional AI panel */}
@@ -417,21 +410,6 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               <p className="text-ink">{lesson.sections.expansion.reading.content}</p>
               <p className="text-muted">{lesson.sections.expansion.reading.translation}</p>
             </article>
-          )}
-
-          {section === "notebook" && (
-            <div className="mt-4 space-y-3">
-              {notebook.length === 0 && (
-                <p className="text-sm text-muted">No saved items yet. Click a vocabulary word in the passage and save it.</p>
-              )}
-              {notebook.map((item, idx) => (
-                <article key={`${item.id ?? "item"}-${idx}`} className="rounded border border-stone-200 bg-card p-3 text-sm">
-                  <p className="text-xs text-muted uppercase tracking-wide">{item.type}</p>
-                  <p className="mt-1 font-medium text-ink">{item.word}</p>
-                  {item.note && <p className="mt-1 text-muted">{item.note}</p>}
-                </article>
-              ))}
-            </div>
           )}
 
           {vocabItem && popupPos ? (

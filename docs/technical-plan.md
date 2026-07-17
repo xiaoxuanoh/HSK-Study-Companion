@@ -6,6 +6,7 @@
 - `/` — Landing page
 - `/dashboard` — Lesson dashboard
 - `/lessons/[id]` — Lesson study page (three-panel layout)
+- `/notebook` — Course-wide notebook workspace
 
 ### Key Components
 - `ThreePanel` — three-column layout wrapper
@@ -14,10 +15,11 @@
 - `LeftNav` — lesson section tab navigation
 - `AITutorPanel` — right-side AI tutor panel
 - `VocabPopup` — small popup on vocabulary word click
-- Section components: `PassageSection`, `VocabularySection`, `GrammarSection`, `WordDistinctionSection`, `ExercisesSection`, `WritingSection`, `WarmupSection`, `NotebookSection`, `ExpansionSection`
+- Section components: `PassageSection`, `VocabularySection`, `GrammarSection`, `WordDistinctionSection`, `ExercisesSection`, `WritingSection`, `WarmupSection`, `ExpansionSection`
 
 ### State Management
-- React local state for current section, selected item, exercise answers, AI panel content, and notebook items
+- React local state for current section, selected item, exercise answers, and AI panel content
+- My Notebook is a separate course-wide route; its replaceable browser-storage layer is planned for the notebook persistence phase
 - No external state library needed for the prototype
 
 ### API

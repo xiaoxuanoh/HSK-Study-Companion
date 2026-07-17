@@ -42,7 +42,8 @@ data/
 | `exercise` | Questions with options, correct answer, and reasoning |
 | `writing` | Writing prompt with plan, patterns, sample answer |
 | `expansion` | Extended reading or listening content |
-| `notebook` | Saved items (local state, not a content block type) |
+
+My Notebook is a course-wide learner workspace rather than a lesson content block. Notebook items retain their source-lesson relationship while being accessed from the dedicated `/notebook` page.
 
 ## Future Database Tables (Not Implemented Yet)
 

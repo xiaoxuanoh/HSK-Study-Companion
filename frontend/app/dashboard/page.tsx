@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import LessonOverviewModal from "@/components/LessonOverviewModal";
 import { getLessons } from "@/lib/api";
@@ -39,8 +40,16 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Top bar */}
-      <header className="border-b border-stone-200 px-6 py-5">
-        <h1 className="text-3xl font-semibold text-ink">Lesson Dashboard</h1>
+      <header className="sticky top-0 z-40 border-b border-stone-200 bg-paper px-4 py-4 sm:px-6 sm:py-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-semibold text-ink sm:text-3xl">Lesson Dashboard</h1>
+          <Link
+            href="/notebook"
+            className="inline-flex min-h-11 items-center rounded-lg border border-stone-300 bg-card px-4 text-sm font-medium text-ink transition-colors hover:bg-card-hover"
+          >
+            My Notebook
+          </Link>
+        </div>
       </header>
 
       {/* One horizontally scrollable row per unit */}
