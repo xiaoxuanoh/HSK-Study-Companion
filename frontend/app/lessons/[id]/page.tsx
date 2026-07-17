@@ -1,6 +1,7 @@
 "use client";
 
-import { use, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { use, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import AITutorPanel from "@/components/AITutorPanel";
 import ExerciseCard, { type ExerciseItem } from "@/components/ExerciseCard";
 import GrammarPopup from "@/components/GrammarPopup";
@@ -20,7 +21,26 @@ const sectionOrder = [
   "notebook"
 ] as const;
 
+const lessonSectionStorageKey = (lessonId: string) => `hsk-study-companion:lesson-section:${lessonId}`;
+const lessonSectionChangeEvent = "hsk-study-companion:lesson-section-change";
+
 type SectionKey = (typeof sectionOrder)[number];
+
+const getSavedLessonSection = (lessonId: string): SectionKey => {
+  const savedSection = window.localStorage.getItem(lessonSectionStorageKey(lessonId));
+  return savedSection && sectionOrder.includes(savedSection as SectionKey)
+    ? (savedSection as SectionKey)
+    : "warmup";
+};
+
+const subscribeToLessonSection = (onStoreChange: () => void) => {
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(lessonSectionChangeEvent, onStoreChange);
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(lessonSectionChangeEvent, onStoreChange);
+  };
+};
 
 type NotebookItem = {
   id?: string;
@@ -59,7 +79,11 @@ type DistinctionGroup = { id: string; words: string[]; sharedMeaning: string; co
 export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: lessonId } = use(params);
   const [lesson, setLesson] = useState<LessonData | null>(null);
-  const [section, setSection] = useState<SectionKey>("warmup");
+  const section = useSyncExternalStore<SectionKey>(
+    subscribeToLessonSection,
+    () => getSavedLessonSection(lessonId),
+    () => "warmup"
+  );
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [currentFocus, setCurrentFocus] = useState("");
   const [popupWord, setPopupWord] = useState<string | null>(null);
@@ -132,7 +156,8 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const saveNotebook = (item: NotebookItem) => setNotebook((prev) => [item, ...prev]);
 
   const handleSectionChange = (nextSection: SectionKey) => {
-    setSection(nextSection);
+    window.localStorage.setItem(lessonSectionStorageKey(lessonId), nextSection);
+    window.dispatchEvent(new Event(lessonSectionChangeEvent));
     setPopupWord(null);
     setPopupPos(null);
     setSelectedGrammarId(null);
@@ -191,13 +216,39 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Top bar */}
-      <header className="shrink-0 border-b border-stone-200 px-6 py-3">
-        <p className="text-xs text-muted">Lesson {lesson.lesson.number}</p>
-        <div className="flex items-baseline gap-3">
-          <h1 className="text-xl font-semibold text-ink">{lesson.lesson.titleChinese}</h1>
-          <span className="text-sm text-muted">{lesson.lesson.titleEnglish}</span>
+      {/* Lesson navigation and identity */}
+      <header className="shrink-0 border-b border-stone-200 bg-paper">
+        <div className="min-w-0 px-4 py-3 sm:px-6">
+          <p className="text-xs text-muted">Lesson {lesson.lesson.number}</p>
+          <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-3">
+            <h1 className="truncate text-lg font-semibold text-ink sm:text-xl">{lesson.lesson.titleChinese}</h1>
+            <span className="truncate text-sm text-muted">{lesson.lesson.titleEnglish}</span>
+          </div>
         </div>
+
+        <nav aria-label="Lesson navigation" className="overflow-x-auto border-t border-stone-200 px-4 sm:px-6">
+          <div className="flex min-w-max items-stretch">
+            <Link
+              href="/dashboard"
+              className="inline-flex min-h-11 items-center gap-2 border-r border-stone-200 px-3 text-sm font-medium text-ink transition-colors hover:bg-card-hover focus-visible:bg-card-hover sm:px-4"
+            >
+              <span aria-hidden="true" className="text-lg leading-none">←</span>
+              <span>Dashboard</span>
+            </Link>
+            <button
+              type="button"
+              aria-current={section === "notebook" ? "page" : undefined}
+              onClick={() => handleSectionChange("notebook")}
+              className={`inline-flex min-h-11 items-center border-r border-stone-200 px-3 text-sm font-medium transition-colors sm:px-4 ${
+                section === "notebook"
+                  ? "bg-white text-ink shadow-[inset_0_-2px_0_#7A9E7E]"
+                  : "text-muted hover:bg-card-hover hover:text-ink focus-visible:bg-card-hover"
+              }`}
+            >
+              My Notebook
+            </button>
+          </div>
+        </nav>
       </header>
 
       {/* Body: nav + content + optional AI panel */}
