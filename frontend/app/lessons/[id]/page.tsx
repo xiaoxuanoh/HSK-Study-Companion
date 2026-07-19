@@ -43,7 +43,7 @@ const subscribeToLessonSection = (onStoreChange: () => void) => {
 
 type NotebookItem = {
   id?: string;
-  type: string;
+  type: "vocabulary" | "phrase" | "grammar" | "mistake" | "note";
   word?: string;
   note?: string;
 };
@@ -89,7 +89,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [popupPos, setPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
   const [selectedGrammarId, setSelectedGrammarId] = useState<string | null>(null);
   const [grammarPopupPos, setGrammarPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
-  const [, setNotebook] = useState<NotebookItem[]>([]);
+  const [notebook, setNotebook] = useState<NotebookItem[]>([]);
   const [aiOpen, setAiOpen] = useState(false);
   const [iconPos, setIconPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -152,7 +152,14 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setCurrentFocus("");
   };
 
-  const saveNotebook = (item: NotebookItem) => setNotebook((prev) => [item, ...prev]);
+  const saveNotebook = (item: NotebookItem) => {
+    setNotebook((previousItems) => {
+      const duplicate = previousItems.some((savedItem) =>
+        savedItem.type === item.type && savedItem.word === item.word
+      );
+      return duplicate ? previousItems : [item, ...previousItems];
+    });
+  };
 
   const handleSectionChange = (nextSection: SectionKey) => {
     window.localStorage.setItem(lessonSectionStorageKey(lessonId), nextSection);
@@ -173,6 +180,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   if (!lesson) return <main className="p-6 text-ink">Loading lesson...</main>;
 
   const vocabItem = popupWord ? vocabByWord[popupWord] : null;
+  const vocabIsInNotebook = vocabItem
+    ? notebook.some((item) => item.type === "vocabulary" && item.word === vocabItem.word)
+    : false;
   const grammarItems = lesson.sections.grammar.items as GrammarItem[];
   const selectedGrammar = selectedGrammarId
     ? grammarItems.find((item) => item.id === selectedGrammarId) ?? null
@@ -416,6 +426,8 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             <VocabPopup
               item={vocabItem}
               position={popupPos}
+              itemType="vocabulary"
+              isInNotebook={vocabIsInNotebook}
               onClose={() => { setPopupWord(null); setPopupPos(null); }}
               onExplain={() => {
                 const word = vocabItem.word;
@@ -427,10 +439,8 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                   setMessages((prev) => [...prev, { role: "assistant", content: res }]);
                 });
               }}
-              onSave={() => {
+              onAddToNotebook={() => {
                 saveNotebook({ type: "vocabulary", word: vocabItem.word, note: `Saved from passage: ${vocabItem.word}` });
-                setPopupWord(null);
-                setPopupPos(null);
               }}
             />
           ) : null}

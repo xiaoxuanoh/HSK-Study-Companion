@@ -19,13 +19,17 @@ export default function VocabPopup({
   position,
   onClose,
   onExplain,
-  onSave
+  itemType = "vocabulary",
+  isInNotebook,
+  onAddToNotebook
 }: {
   item: Item;
   position: Position;
   onClose: () => void;
   onExplain: () => void;
-  onSave: () => void;
+  itemType?: "vocabulary" | "phrase";
+  isInNotebook: boolean;
+  onAddToNotebook: () => void;
 }) {
   const popupRef = useRef<HTMLDivElement>(null);
   const style: React.CSSProperties = position.above
@@ -52,7 +56,7 @@ export default function VocabPopup({
     <div
       ref={popupRef}
       role="dialog"
-      aria-label={`${item.word} vocabulary details`}
+      aria-label={`${item.word} ${itemType} details`}
       className="fixed z-50 w-[calc(100vw-16px)] max-w-sm rounded-xl border border-stone-200 bg-white p-4 shadow-xl"
       style={style}
     >
@@ -72,9 +76,19 @@ export default function VocabPopup({
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">Example</p>
         <p className="mt-1 text-sm leading-6 text-ink">{item.example}</p>
       </div>
-      <div className="mt-3 flex gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         <button onClick={onExplain} className="rounded bg-accent px-2 py-1 text-xs text-white hover:bg-accent-hover">Explain More</button>
-        <button onClick={onSave} className="rounded border border-stone-300 px-2 py-1 text-xs text-ink hover:bg-paper">Save</button>
+        <button
+          type="button"
+          onClick={onAddToNotebook}
+          disabled={isInNotebook}
+          className="rounded border border-stone-300 px-2 py-1 text-xs font-medium text-ink hover:bg-paper disabled:cursor-default disabled:border-accent/40 disabled:bg-paper disabled:text-accent"
+        >
+          {isInNotebook ? "✓ In Notebook" : "Add to Notebook"}
+        </button>
+        <span className="sr-only" aria-live="polite">
+          {isInNotebook ? `${item.word} is already in My Notebook.` : ""}
+        </span>
       </div>
     </div>
   );
