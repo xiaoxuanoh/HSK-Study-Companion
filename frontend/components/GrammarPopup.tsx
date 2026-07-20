@@ -22,25 +22,53 @@ export default function GrammarPopup({
   item,
   position,
   onClose,
+  isInNotebook,
+  onAddToNotebook,
 }: {
   item: GrammarItem;
   position: Position;
   onClose: () => void;
+  isInNotebook: boolean;
+  onAddToNotebook: () => void;
 }) {
   const popupRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const isCompact = window.innerWidth < 640;
   const availableHeight = position.above
-    ? Math.max(240, position.y - 16)
-    : Math.max(240, window.innerHeight - position.y - 16);
-  const style: React.CSSProperties = position.above
-    ? { bottom: window.innerHeight - position.y + 8, left: position.x, maxHeight: availableHeight }
-    : { top: position.y + 8, left: position.x, maxHeight: availableHeight };
+    ? Math.max(160, position.y - 16)
+    : Math.max(160, window.innerHeight - position.y - 16);
+  const style: React.CSSProperties = isCompact
+    ? { bottom: 8, left: 8, maxHeight: window.innerHeight - 16 }
+    : position.above
+      ? { bottom: window.innerHeight - position.y + 8, left: position.x, maxHeight: availableHeight }
+      : { top: position.y + 8, left: position.x, maxHeight: availableHeight };
 
   useEffect(() => {
+    closeButtonRef.current?.focus();
+
     const handlePointerDown = (event: MouseEvent) => {
       if (!popupRef.current?.contains(event.target as Node)) onClose();
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !popupRef.current) return;
+      const controls = Array.from(
+        popupRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+      );
+      const first = controls[0];
+      const last = controls.at(-1);
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     document.addEventListener("mousedown", handlePointerDown);
@@ -55,8 +83,9 @@ export default function GrammarPopup({
     <div
       ref={popupRef}
       role="dialog"
+      aria-modal="true"
       aria-label={`${item.grammarPoint} grammar details`}
-      className="fixed z-50 w-[calc(100vw-16px)] max-w-xl overflow-y-auto rounded-xl border border-stone-200 bg-white p-5 shadow-xl"
+      className="fixed z-50 w-[calc(100vw-16px)] max-w-xl overscroll-contain overflow-y-auto rounded-xl border border-stone-200 bg-white p-4 shadow-xl sm:p-5"
       style={style}
     >
       <div className="flex items-start justify-between gap-4">
@@ -66,7 +95,7 @@ export default function GrammarPopup({
             {item.type}
           </span>
         </div>
-        <button type="button" onClick={onClose} className="shrink-0 text-xs text-muted hover:text-ink">
+        <button ref={closeButtonRef} type="button" onClick={onClose} className="-mr-2 -mt-2 flex min-h-11 shrink-0 items-center px-2 text-xs text-muted hover:text-ink">
           Close
         </button>
       </div>
@@ -118,6 +147,20 @@ export default function GrammarPopup({
       <div className="mt-3 rounded-lg bg-paper p-3 text-sm leading-5">
         <p className="font-semibold text-ink">Try it</p>
         <p className="mt-1 text-muted">{item.miniPractice}</p>
+      </div>
+
+      <div className="mt-4 flex justify-end border-t border-stone-200 pt-4">
+        <button
+          type="button"
+          onClick={onAddToNotebook}
+          disabled={isInNotebook}
+          className="min-h-11 rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-ink hover:bg-paper disabled:cursor-default disabled:border-accent/40 disabled:bg-paper disabled:text-accent"
+        >
+          {isInNotebook ? "✓ In Notebook" : "Add to Notebook"}
+        </button>
+        <span className="sr-only" aria-live="polite">
+          {isInNotebook ? `${item.grammarPoint} is already in My Notebook.` : ""}
+        </span>
       </div>
     </div>
   );

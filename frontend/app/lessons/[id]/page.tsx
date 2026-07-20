@@ -7,6 +7,7 @@ import ExerciseCard, { type ExerciseItem } from "@/components/ExerciseCard";
 import GrammarPopup from "@/components/GrammarPopup";
 import VocabPopup from "@/components/VocabPopup";
 import { askAI, getLesson } from "@/lib/api";
+import { makeNotebookDedupeKey, useNotebook } from "@/lib/notebook";
 import type { LessonData } from "@/lib/types";
 
 const sectionOrder = [
@@ -39,13 +40,6 @@ const subscribeToLessonSection = (onStoreChange: () => void) => {
     window.removeEventListener("storage", onStoreChange);
     window.removeEventListener(lessonSectionChangeEvent, onStoreChange);
   };
-};
-
-type NotebookItem = {
-  id?: string;
-  type: "vocabulary" | "phrase" | "grammar" | "mistake" | "note";
-  word?: string;
-  note?: string;
 };
 
 type VocabItem = {
@@ -89,9 +83,11 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [popupPos, setPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
   const [selectedGrammarId, setSelectedGrammarId] = useState<string | null>(null);
   const [grammarPopupPos, setGrammarPopupPos] = useState<{ x: number; y: number; above: boolean } | null>(null);
-  const [notebook, setNotebook] = useState<NotebookItem[]>([]);
+  const { items: notebook, addItem: addNotebookItem } = useNotebook();
   const [aiOpen, setAiOpen] = useState(false);
   const [iconPos, setIconPos] = useState<{ x: number; y: number } | null>(null);
+  const vocabTriggerRef = useRef<HTMLElement | null>(null);
+  const grammarTriggerRef = useRef<HTMLElement | null>(null);
 
   const dragState = useRef({
     active: false,
@@ -126,7 +122,6 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   useEffect(() => {
     getLesson(lessonId).then((data) => {
       setLesson(data);
-      setNotebook((data.sections.notebook.savedItems as NotebookItem[]) || []);
     });
   }, [lessonId]);
 
@@ -152,13 +147,16 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setCurrentFocus("");
   };
 
-  const saveNotebook = (item: NotebookItem) => {
-    setNotebook((previousItems) => {
-      const duplicate = previousItems.some((savedItem) =>
-        savedItem.type === item.type && savedItem.word === item.word
-      );
-      return duplicate ? previousItems : [item, ...previousItems];
-    });
+  const closeVocabPopup = (restoreFocus = true) => {
+    setPopupWord(null);
+    setPopupPos(null);
+    if (restoreFocus) window.requestAnimationFrame(() => vocabTriggerRef.current?.focus());
+  };
+
+  const closeGrammarPopup = (restoreFocus = true) => {
+    setSelectedGrammarId(null);
+    setGrammarPopupPos(null);
+    if (restoreFocus) window.requestAnimationFrame(() => grammarTriggerRef.current?.focus());
   };
 
   const handleSectionChange = (nextSection: SectionKey) => {
@@ -179,14 +177,29 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
   if (!lesson) return <main className="p-6 text-ink">Loading lesson...</main>;
 
+  const notebookSource = {
+    lessonId: lesson.id,
+    lessonNumber: lesson.lesson.number,
+    titleChinese: lesson.lesson.titleChinese,
+    titleEnglish: lesson.lesson.titleEnglish,
+  };
   const vocabItem = popupWord ? vocabByWord[popupWord] : null;
+  const vocabDedupeKey = vocabItem
+    ? makeNotebookDedupeKey("vocabulary", lesson.id, vocabItem.word)
+    : null;
   const vocabIsInNotebook = vocabItem
-    ? notebook.some((item) => item.type === "vocabulary" && item.word === vocabItem.word)
+    ? notebook.some((item) => item.dedupeKey === vocabDedupeKey)
     : false;
   const grammarItems = lesson.sections.grammar.items as GrammarItem[];
   const selectedGrammar = selectedGrammarId
     ? grammarItems.find((item) => item.id === selectedGrammarId) ?? null
     : null;
+  const grammarDedupeKey = selectedGrammar
+    ? makeNotebookDedupeKey("grammar", lesson.id, selectedGrammar.grammarPoint)
+    : null;
+  const grammarIsInNotebook = selectedGrammar
+    ? notebook.some((item) => item.dedupeKey === grammarDedupeKey)
+    : false;
 
   const renderPassage = () => {
     const highlights = lesson.sections.passage.vocabularyHighlights as Record<string, string>;
@@ -201,8 +214,12 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                   return (
                     <button
                       key={`${p.id}-${idx}`}
+                      type="button"
+                      aria-haspopup="dialog"
+                      aria-expanded={popupWord === part}
                       onClick={(e) => {
                         const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                        vocabTriggerRef.current = e.currentTarget;
                         setSelectedGrammarId(null);
                         setGrammarPopupPos(null);
                         setPopupWord(part);
@@ -305,6 +322,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                   aria-expanded={popupWord === item.word}
                   onClick={(event) => {
                     const rect = event.currentTarget.getBoundingClientRect();
+                    vocabTriggerRef.current = event.currentTarget;
                     setSelectedGrammarId(null);
                     setGrammarPopupPos(null);
                     setPopupWord(item.word);
@@ -341,6 +359,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                   aria-expanded={selectedGrammarId === item.id}
                   onClick={(event) => {
                     const rect = event.currentTarget.getBoundingClientRect();
+                    grammarTriggerRef.current = event.currentTarget;
                     setPopupWord(null);
                     setPopupPos(null);
                     setSelectedGrammarId(item.id);
@@ -395,9 +414,29 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
           {section === "exercises" && (
             <div className="mt-4 space-y-4">
-              {(lesson.sections.exercises.items as ExerciseItem[]).map((item) => (
-                <ExerciseCard key={item.id} item={item} />
-              ))}
+              {(lesson.sections.exercises.items as ExerciseItem[]).map((item) => {
+                const mistakeDedupeKey = makeNotebookDedupeKey("mistake", lesson.id, item.id);
+                return (
+                  <ExerciseCard
+                    key={item.id}
+                    item={item}
+                    isInNotebook={notebook.some((savedItem) => savedItem.dedupeKey === mistakeDedupeKey)}
+                    onAddMistake={(mistake) => addNotebookItem({
+                      type: "mistake",
+                      title: mistake.title,
+                      myAnswer: mistake.myAnswer,
+                      correctAnswer: mistake.correctAnswer,
+                      reason: mistake.reason,
+                      selectedAnswerExplanation: mistake.selectedAnswerExplanation,
+                      correctAnswerExplanation: mistake.correctAnswerExplanation,
+                      overallExplanation: mistake.overallExplanation,
+                      exerciseContext: mistake.exerciseContext,
+                      source: notebookSource,
+                      dedupeKey: mistakeDedupeKey,
+                    })}
+                  />
+                );
+              })}
             </div>
           )}
 
@@ -428,7 +467,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               position={popupPos}
               itemType="vocabulary"
               isInNotebook={vocabIsInNotebook}
-              onClose={() => { setPopupWord(null); setPopupPos(null); }}
+              onClose={() => closeVocabPopup()}
               onExplain={() => {
                 const word = vocabItem.word;
                 setCurrentFocus(word);
@@ -440,7 +479,14 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 });
               }}
               onAddToNotebook={() => {
-                saveNotebook({ type: "vocabulary", word: vocabItem.word, note: `Saved from passage: ${vocabItem.word}` });
+                addNotebookItem({
+                  type: "vocabulary",
+                  title: vocabItem.word,
+                  pinyin: vocabItem.pinyin,
+                  summary: vocabItem.meaning,
+                  source: notebookSource,
+                  dedupeKey: vocabDedupeKey ?? undefined,
+                });
               }}
             />
           ) : null}
@@ -449,10 +495,16 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             <GrammarPopup
               item={selectedGrammar}
               position={grammarPopupPos}
-              onClose={() => {
-                setSelectedGrammarId(null);
-                setGrammarPopupPos(null);
-              }}
+              onClose={() => closeGrammarPopup()}
+              isInNotebook={grammarIsInNotebook}
+              onAddToNotebook={() => addNotebookItem({
+                type: "grammar",
+                title: selectedGrammar.grammarPoint,
+                summary: selectedGrammar.coreMeaning,
+                structure: selectedGrammar.structure,
+                source: notebookSource,
+                dedupeKey: grammarDedupeKey ?? undefined,
+              })}
             />
           ) : null}
         </main>

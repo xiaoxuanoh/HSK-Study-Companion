@@ -74,12 +74,14 @@ AI Tutor Panel (right panel)
 
 ```
 Any section
-  └─> [Save] button on vocabulary card / grammar card / exercise explanation
-        └─> Item added to course-wide My Notebook workspace
-              └─> Dedicated Notebook page shows:
-                    ├─> Saved vocabulary
-                    ├─> Saved grammar points
-                    ├─> Saved wrong answers
-                    ├─> Saved AI explanations
-                    └─> Saved writing corrections
+  └─> [Add to Notebook] on vocabulary or grammar details, or an incorrect exercise
+        ├─> Duplicate check for the same lesson item
+        └─> Item saved to versioned browser storage
+              └─> Dedicated Notebook page provides:
+                    ├─> Search and type filters
+                    ├─> Default grouping by source lesson
+                    ├─> Source-lesson links
+                    ├─> Editable personal remarks
+                    ├─> Standalone personal notes
+                    └─> Removal with confirmation
 ```

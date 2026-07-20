@@ -45,6 +45,8 @@ data/
 
 My Notebook is a course-wide learner workspace rather than a lesson content block. Notebook items retain their source-lesson relationship while being accessed from the dedicated `/notebook` page.
 
+Notebook records use a versioned browser-storage envelope and contain a stable ID, item type, display content, optional source-lesson metadata, an editable personal remark, timestamps, and an optional duplicate-prevention key. Supported types are vocabulary, phrases, grammar, mistakes, and standalone personal notes. The storage implementation is accessed through a repository interface so it can later be replaced without rewriting notebook UI components.
+
 ## Future Database Tables (Not Implemented Yet)
 
 Document only — do not implement:

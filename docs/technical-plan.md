@@ -19,7 +19,8 @@
 
 ### State Management
 - React local state for current section, selected item, exercise answers, and AI panel content
-- My Notebook is a separate course-wide route; its replaceable browser-storage layer is planned for the notebook persistence phase
+- `frontend/lib/notebook.ts` provides a versioned local-storage repository and React subscription hook for course-wide notebook data
+- Notebook UI depends on the `NotebookRepository` interface so browser storage can later be replaced by an account-backed implementation
 - No external state library needed for the prototype
 
 ### API
@@ -59,7 +60,8 @@ backend/app/
 
 - All lesson content from `data/hsk6/lesson-01.json`
 - AI responses are mock strings returned by `services/ai_service.py`
-- Notebook is in-memory dict (resets on server restart)
+- The active frontend notebook persists locally in the learner's browser using a versioned storage envelope
+- Mock notebook API endpoints remain available for backend prototyping but are not the frontend notebook's source of truth
 
 ## Current Framework Baseline
 

@@ -1,99 +1,420 @@
-import Link from "next/link";
-import { mockLesson } from "@/lib/mockData";
+"use client";
 
-type NotebookItem = {
-  id: string;
-  type: string;
-  word?: string;
-  pinyin?: string;
-  meaning?: string;
-  grammarPoint?: string;
-  structure?: string;
-  myAnswer?: string;
-  correctAnswer?: string;
-  reason?: string;
-  note?: string;
+import Link from "next/link";
+import { useCallback, useMemo, useRef, useState } from "react";
+import ExerciseReviewModal from "@/components/ExerciseReviewModal";
+import {
+  type NotebookItem,
+  type NotebookItemType,
+  type NotebookSource,
+  useNotebook,
+} from "@/lib/notebook";
+
+type FilterValue = "all" | NotebookItemType;
+
+const typeLabels: Record<NotebookItemType, string> = {
+  vocabulary: "Vocabulary",
+  phrase: "Phrases",
+  grammar: "Grammar",
+  mistake: "Mistakes",
+  "personal-note": "Personal Notes",
 };
 
-const savedItems = mockLesson.sections.notebook.savedItems as NotebookItem[];
+const filters: Array<{ value: FilterValue; label: string }> = [
+  { value: "all", label: "All" },
+  { value: "vocabulary", label: "Vocabulary" },
+  { value: "phrase", label: "Phrases" },
+  { value: "grammar", label: "Grammar" },
+  { value: "mistake", label: "Mistakes" },
+  { value: "personal-note", label: "Personal Notes" },
+];
 
-function getItemTitle(item: NotebookItem) {
-  if (item.word) return item.word;
-  if (item.grammarPoint) return item.grammarPoint;
-  if (item.type === "mistake") return "Exercise mistake";
-  return "Notebook item";
-}
+type NotebookGroup = {
+  key: string;
+  source?: NotebookSource;
+  items: NotebookItem[];
+};
 
-function getItemSummary(item: NotebookItem) {
-  if (item.meaning) return item.meaning;
-  if (item.structure) return item.structure;
-  if (item.reason) return item.reason;
-  return item.note;
+function NotebookCard({
+  item,
+  onUpdateNote,
+  onRemove,
+}: {
+  item: NotebookItem;
+  onUpdateNote: (id: string, note: string) => void;
+  onRemove: (id: string) => void;
+}) {
+  const [editingNote, setEditingNote] = useState(false);
+  const [noteDraft, setNoteDraft] = useState(item.personalNote);
+  const [confirmingRemoval, setConfirmingRemoval] = useState(false);
+  const [showQuestion, setShowQuestion] = useState(false);
+  const viewQuestionButtonRef = useRef<HTMLButtonElement>(null);
+  const noteLabel = item.type === "personal-note" ? "Note" : "Personal remark";
+
+  const closeQuestion = useCallback(() => {
+    setShowQuestion(false);
+    window.requestAnimationFrame(() => viewQuestionButtonRef.current?.focus());
+  }, []);
+
+  const saveNote = () => {
+    const nextNote = noteDraft.trim();
+    onUpdateNote(item.id, nextNote);
+    setNoteDraft(nextNote);
+    setEditingNote(false);
+  };
+
+  return (
+    <article className="flex min-w-0 flex-col rounded-xl border border-stone-200 bg-card p-4 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">{typeLabels[item.type]}</p>
+          <h3 className="mt-1 break-words text-lg font-semibold text-ink">{item.title}</h3>
+          {item.pinyin ? <p className="mt-0.5 text-sm text-muted">{item.pinyin}</p> : null}
+        </div>
+        <time className="text-xs text-muted" dateTime={item.createdAt}>
+          {new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(new Date(item.createdAt))}
+        </time>
+      </div>
+
+      {item.summary ? <p className="mt-3 text-sm leading-6 text-ink">{item.summary}</p> : null}
+      {item.structure ? (
+        <div className="mt-3 rounded-lg bg-paper p-3 text-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">Structure</p>
+          <p className="mt-1 font-medium text-ink">{item.structure}</p>
+        </div>
+      ) : null}
+      {item.type === "mistake" ? (
+        <div className="mt-3">
+          <dl className="space-y-2 rounded-lg bg-paper p-3 text-sm">
+            {item.myAnswer ? (
+              <div>
+                <dt className="font-semibold text-muted">Your selection</dt>
+                <dd className="mt-0.5 font-medium text-rose-700">{item.myAnswer}</dd>
+              </div>
+            ) : null}
+            {item.correctAnswer ? (
+              <div>
+                <dt className="font-semibold text-muted">Correct answer</dt>
+                <dd className="mt-0.5 font-medium text-accent-hover">{item.correctAnswer}</dd>
+              </div>
+            ) : null}
+          </dl>
+
+          {item.exerciseContext ? (
+            <button
+              ref={viewQuestionButtonRef}
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded={showQuestion}
+              onClick={() => setShowQuestion(true)}
+              className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:text-accent-hover"
+            >
+              <span aria-hidden="true">↗</span>
+              View question
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className="mt-auto border-t border-stone-200 pt-4">
+        {editingNote ? (
+          <div>
+            <label htmlFor={`notebook-note-${item.id}`} className="text-xs font-semibold uppercase tracking-wide text-muted">
+              {noteLabel}
+            </label>
+            <textarea
+              id={`notebook-note-${item.id}`}
+              value={noteDraft}
+              onChange={(event) => setNoteDraft(event.target.value)}
+              rows={3}
+              className="mt-2 w-full resize-y rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm leading-5 text-ink"
+              placeholder={item.type === "personal-note" ? "Write your note…" : "Add a memory aid, example, or reminder…"}
+            />
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button type="button" onClick={saveNote} className="min-h-11 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover">
+                Save {item.type === "personal-note" ? "note" : "remark"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setNoteDraft(item.personalNote);
+                  setEditingNote(false);
+                }}
+                className="min-h-11 rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-ink hover:bg-paper"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {item.personalNote ? (
+              <p className="text-sm leading-6 text-muted">
+                <span className="font-semibold text-ink">{noteLabel}:</span> {item.personalNote}
+              </p>
+            ) : (
+              <p className="text-sm text-muted">No personal remark yet.</p>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setNoteDraft(item.personalNote);
+                setEditingNote(true);
+              }}
+              className="mt-2 min-h-11 text-sm font-medium text-accent hover:text-accent-hover"
+            >
+              {item.personalNote
+                ? `Edit ${item.type === "personal-note" ? "note" : "remark"}`
+                : "Add remark"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 border-t border-stone-200 pt-3">
+        {confirmingRemoval ? (
+          <div className="rounded-lg border border-rose-200 bg-rose-50 p-3" role="alert">
+            <p className="text-sm font-medium text-rose-800">Remove this item from My Notebook?</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button type="button" onClick={() => onRemove(item.id)} className="min-h-11 rounded-lg bg-rose-700 px-4 py-2 text-sm font-medium text-white hover:bg-rose-800">
+                Yes, remove
+              </button>
+              <button type="button" onClick={() => setConfirmingRemoval(false)} className="min-h-11 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-paper">
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" onClick={() => setConfirmingRemoval(true)} className="min-h-11 text-sm font-medium text-rose-700 hover:text-rose-800">
+            Remove from Notebook
+          </button>
+        )}
+      </div>
+
+      {showQuestion && item.exerciseContext ? (
+        <ExerciseReviewModal item={item} onClose={closeQuestion} />
+      ) : null}
+    </article>
+  );
 }
 
 export default function NotebookPage() {
+  const { items, addItem, updatePersonalNote, removeItem } = useNotebook();
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<FilterValue>("all");
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  const [noteTitle, setNoteTitle] = useState("");
+  const [noteBody, setNoteBody] = useState("");
+
+  const filteredItems = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase();
+    return items.filter((item) => {
+      if (filter !== "all" && item.type !== filter) return false;
+      if (!query) return true;
+      const searchableText = [
+        item.title,
+        item.pinyin,
+        item.summary,
+        item.structure,
+        item.myAnswer,
+        item.correctAnswer,
+        item.reason,
+        item.selectedAnswerExplanation,
+        item.correctAnswerExplanation,
+        item.overallExplanation,
+        item.exerciseContext?.prompt,
+        item.exerciseContext?.sentence,
+        item.exerciseContext?.options?.map((option) => `${option.id} ${option.text}`).join(" "),
+        item.exerciseContext?.wordBank?.join(" "),
+        item.exerciseContext?.sentences?.map((sentence) => `${sentence.before} ${sentence.after}`).join(" "),
+        item.personalNote,
+        item.source?.titleChinese,
+        item.source?.titleEnglish,
+        item.source ? `Lesson ${item.source.lessonNumber}` : "",
+      ].filter(Boolean).join(" ").toLocaleLowerCase();
+      return searchableText.includes(query);
+    });
+  }, [filter, items, search]);
+
+  const groups = useMemo(() => {
+    const grouped = new Map<string, NotebookGroup>();
+    for (const item of filteredItems) {
+      const key = item.source?.lessonId ?? "standalone";
+      const group = grouped.get(key) ?? { key, source: item.source, items: [] };
+      group.items.push(item);
+      grouped.set(key, group);
+    }
+    return [...grouped.values()].sort((left, right) => {
+      if (!left.source) return 1;
+      if (!right.source) return -1;
+      return left.source.lessonNumber - right.source.lessonNumber;
+    });
+  }, [filteredItems]);
+
+  const createStandaloneNote = () => {
+    const title = noteTitle.trim();
+    const summary = noteBody.trim();
+    if (!title || !summary) return;
+    addItem({ type: "personal-note", title, personalNote: summary });
+    setNoteTitle("");
+    setNoteBody("");
+    setShowNoteForm(false);
+  };
+
   return (
     <div className="min-h-[100dvh] bg-paper text-ink">
-      <header className="sticky top-0 z-40 border-b border-stone-200 bg-paper px-4 py-4 sm:px-6">
+      <header className="sticky top-0 z-40 border-b border-stone-200 bg-paper px-4 py-2.5 sm:px-6 sm:py-3">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">HSK Study Companion</p>
-            <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">My Notebook</h1>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">HSK Study Companion</p>
+            <div className="mt-0.5 flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+              <h1 className="text-xl font-semibold sm:text-2xl">My Notebook</h1>
+              <p className="text-xs text-muted">{items.length} {items.length === 1 ? "item" : "items"} saved on this browser</p>
+            </div>
           </div>
-          <Link
-            href="/dashboard"
-            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-300 bg-card px-4 text-sm font-medium transition-colors hover:bg-card-hover"
-          >
-            <span aria-hidden="true">←</span>
-            Dashboard
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowNoteForm((visible) => !visible)}
+              className="inline-flex min-h-11 items-center rounded-lg bg-accent px-4 text-sm font-medium text-white hover:bg-accent-hover"
+            >
+              + New Note
+            </button>
+            <Link
+              href="/dashboard"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-300 bg-card px-4 text-sm font-medium transition-colors hover:bg-card-hover"
+            >
+              <span aria-hidden="true">←</span>
+              Dashboard
+            </Link>
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
-        <section aria-labelledby="notebook-introduction" className="rounded-xl border border-stone-200 bg-card p-5 shadow-sm sm:p-6">
-          <h2 id="notebook-introduction" className="text-lg font-semibold">Your course-wide study workspace</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
-            Vocabulary, grammar, mistakes, and personal study notes from every lesson belong here, separate from the lesson sections.
-          </p>
+        {showNoteForm ? (
+          <section aria-labelledby="new-note-title" className="rounded-xl border border-accent/40 bg-card p-5 shadow-sm sm:p-6">
+            <h2 id="new-note-title" className="text-lg font-semibold">Create a standalone note</h2>
+            <p className="mt-1 text-sm text-muted">Capture something useful even when it is not connected to a lesson.</p>
+            <div className="mt-4 grid gap-4">
+              <label className="text-sm font-medium text-ink">
+                Title
+                <input
+                  value={noteTitle}
+                  onChange={(event) => setNoteTitle(event.target.value)}
+                  className="mt-2 min-h-11 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 font-normal"
+                  placeholder="e.g. Words to review this week"
+                />
+              </label>
+              <label className="text-sm font-medium text-ink">
+                Note
+                <textarea
+                  value={noteBody}
+                  onChange={(event) => setNoteBody(event.target.value)}
+                  rows={4}
+                  className="mt-2 w-full resize-y rounded-lg border border-stone-300 bg-white px-3 py-2 font-normal leading-6"
+                  placeholder="Write your note…"
+                />
+              </label>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={createStandaloneNote}
+                disabled={!noteTitle.trim() || !noteBody.trim()}
+                className="min-h-11 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Add Note
+              </button>
+              <button type="button" onClick={() => setShowNoteForm(false)} className="min-h-11 rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-paper">
+                Cancel
+              </button>
+            </div>
+          </section>
+        ) : null}
+
+        <section aria-labelledby="notebook-tools" className={`${showNoteForm ? "mt-6" : ""} rounded-xl border border-stone-200 bg-card p-4 shadow-sm sm:p-5`}>
+          <h2 id="notebook-tools" className="sr-only">Search and filter notebook</h2>
+          <label htmlFor="notebook-search" className="text-sm font-medium text-ink">Search My Notebook</label>
+          <input
+            id="notebook-search"
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            className="mt-2 min-h-11 w-full rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm"
+            placeholder="Search words, explanations, remarks, or lessons…"
+          />
+          <div className="mt-4 flex flex-wrap gap-2" aria-label="Filter notebook by type">
+            {filters.map((option) => {
+              const count = option.value === "all" ? items.length : items.filter((item) => item.type === option.value).length;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  aria-pressed={filter === option.value}
+                  onClick={() => setFilter(option.value)}
+                  className={`min-h-11 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                    filter === option.value
+                      ? "border-accent bg-accent text-white"
+                      : "border-stone-300 bg-white text-ink hover:bg-paper"
+                  }`}
+                >
+                  {option.label} ({count})
+                </button>
+              );
+            })}
+          </div>
         </section>
 
-        <section aria-labelledby="lesson-one-notes" className="mt-8">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-sm text-muted">Lesson {mockLesson.lesson.number}</p>
-              <h2 id="lesson-one-notes" className="text-xl font-semibold">
-                {mockLesson.lesson.titleChinese}
-              </h2>
-              <p className="mt-1 text-sm text-muted">{mockLesson.lesson.titleEnglish}</p>
+        <div className="mt-8" aria-live="polite">
+          {groups.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-stone-300 bg-card p-8 text-center">
+              <h2 className="text-lg font-semibold">No matching notebook items</h2>
+              <p className="mt-2 text-sm text-muted">
+                {items.length === 0 ? "Add an item from a lesson or create a standalone note." : "Try another search or filter."}
+              </p>
             </div>
-            <Link
-              href={`/lessons/${mockLesson.id}`}
-              className="inline-flex min-h-11 items-center text-sm font-medium text-accent hover:text-accent-hover"
-            >
-              Return to lesson →
-            </Link>
-          </div>
+          ) : null}
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {savedItems.map((item) => (
-              <article key={item.id} className="rounded-xl border border-stone-200 bg-card p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted">{item.type}</p>
-                <h3 className="mt-2 text-lg font-semibold">{getItemTitle(item)}</h3>
-                {item.pinyin ? <p className="mt-0.5 text-sm text-muted">{item.pinyin}</p> : null}
-                {getItemSummary(item) ? (
-                  <p className="mt-3 text-sm leading-6 text-ink">{getItemSummary(item)}</p>
-                ) : null}
-                {item.type === "mistake" && item.myAnswer && item.correctAnswer ? (
-                  <p className="mt-3 text-sm text-muted">
-                    Your answer: {item.myAnswer} · Correct answer: {item.correctAnswer}
-                  </p>
-                ) : null}
-                {item.note ? <p className="mt-3 border-t border-stone-200 pt-3 text-sm leading-6 text-muted">{item.note}</p> : null}
-              </article>
+          <div className="space-y-10">
+            {groups.map((group) => (
+              <section key={group.key} aria-labelledby={`notebook-group-${group.key}`}>
+                <div className="flex flex-wrap items-end justify-between gap-3 border-b border-stone-200 pb-3">
+                  <div>
+                    {group.source ? (
+                      <>
+                        <p className="text-sm text-muted">Lesson {group.source.lessonNumber}</p>
+                        <h2 id={`notebook-group-${group.key}`} className="text-xl font-semibold">{group.source.titleChinese}</h2>
+                        <p className="mt-1 text-sm text-muted">{group.source.titleEnglish}</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm text-muted">Course-wide</p>
+                        <h2 id={`notebook-group-${group.key}`} className="text-xl font-semibold">Standalone Notes</h2>
+                      </>
+                    )}
+                  </div>
+                  {group.source ? (
+                    <Link href={`/lessons/${group.source.lessonId}`} className="inline-flex min-h-11 items-center text-sm font-medium text-accent hover:text-accent-hover">
+                      Open source lesson →
+                    </Link>
+                  ) : null}
+                </div>
+
+                <div className="mt-4 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.items.map((item) => (
+                    <NotebookCard
+                      key={item.id}
+                      item={item}
+                      onUpdateNote={updatePersonalNote}
+                      onRemove={removeItem}
+                    />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );
