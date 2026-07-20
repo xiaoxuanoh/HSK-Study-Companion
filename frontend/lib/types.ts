@@ -40,6 +40,10 @@ export type LessonData = {
     writing: LessonSection & {
       prompt: { chinese: string; english: string };
       promptExplanation: string;
+      writingPlan: string[];
+      usefulPatterns: string[];
+      sampleAnswer: { chinese: string; english: string };
+      correctionNote: string;
     };
     expansion: LessonSection & {
       reading: { content: string; translation: string };

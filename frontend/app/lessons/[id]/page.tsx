@@ -6,6 +6,7 @@ import AITutorPanel from "@/components/AITutorPanel";
 import ExerciseCard, { type ExerciseItem } from "@/components/ExerciseCard";
 import GrammarPopup from "@/components/GrammarPopup";
 import VocabPopup from "@/components/VocabPopup";
+import WritingWorkspace from "@/components/WritingWorkspace";
 import { askAI, getLesson } from "@/lib/api";
 import { makeNotebookDedupeKey, useNotebook } from "@/lib/notebook";
 import type { LessonData } from "@/lib/types";
@@ -459,17 +460,15 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           )}
 
           {section === "writing" && (
-            <article className="mt-4 rounded-lg border border-stone-200 bg-card p-4 text-sm">
-              <p className="font-medium text-ink">{lesson.sections.writing.prompt.chinese}</p>
-              <p className="text-muted">{lesson.sections.writing.prompt.english}</p>
-              <p className="mt-3 text-ink">{lesson.sections.writing.promptExplanation}</p>
-              <h4 className="mt-3 font-semibold text-ink">Suggested correction style</h4>
-              <ul className="list-disc pl-6 text-muted">
-                <li>Suggested correction: adjust wording for clarity and grammar.</li>
-                <li>More natural version: improve flow and tone.</li>
-                <li>Another possible version: preserve your voice with a different valid expression.</li>
-              </ul>
-            </article>
+            <WritingWorkspace
+              key={lesson.id}
+              lessonId={lesson.id}
+              prompt={lesson.sections.writing.prompt}
+              promptExplanation={lesson.sections.writing.promptExplanation}
+              writingPlan={lesson.sections.writing.writingPlan}
+              usefulPatterns={lesson.sections.writing.usefulPatterns}
+              lessonVocabulary={(lesson.sections.vocabulary.items as VocabItem[]).map((item) => item.word)}
+            />
           )}
 
           {section === "expansion" && (

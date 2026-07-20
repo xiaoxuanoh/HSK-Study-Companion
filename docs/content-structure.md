@@ -40,12 +40,14 @@ data/
 | `grammar` | Grammar notes with structure, logic, tone, example, breakdown |
 | `word_distinction` | Near-synonym comparison groups |
 | `exercise` | Questions with options, correct answer, and reasoning |
-| `writing` | Writing prompt with plan, patterns, sample answer |
+| `writing` | Writing prompt with plan, patterns, a locally autosaved draft, and supportive feedback history |
 | `expansion` | Extended reading or listening content |
 
 My Notebook is a course-wide learner workspace rather than a lesson content block. Notebook items retain their source-lesson relationship while being accessed from the dedicated `/notebook` page.
 
 Notebook records use a versioned browser-storage envelope and contain a stable ID, item type, display content, optional source-lesson metadata, an editable personal remark, timestamps, and an optional duplicate-prevention key. Supported types are vocabulary, phrases, grammar, mistakes, and standalone personal notes. The storage implementation is accessed through a repository interface so it can later be replaced without rewriting notebook UI components.
+
+Writing workspaces also use versioned browser storage through a replaceable repository interface. Each lesson retains its current draft and feedback history. A feedback entry stores the submitted draft snapshot and supportive guidance grouped into strengths, grammar and clarity, natural wording, lesson vocabulary, and revision suggestions. Prototype feedback never assigns a score or grade.
 
 ## Future Database Tables (Not Implemented Yet)
 

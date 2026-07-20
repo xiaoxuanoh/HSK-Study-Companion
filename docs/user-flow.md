@@ -85,3 +85,21 @@ Any section
                     ├─> Standalone personal notes
                     └─> Removal with confirmation
 ```
+
+## Writing / Application Flow
+
+```
+Writing / Application Section
+  ├─> Review the prompt, writing plan, and useful lesson patterns
+  └─> Compose in a large editor
+        ├─> Character count updates while typing
+        ├─> Draft saves automatically to versioned browser storage
+        ├─> [Clear draft] requires confirmation
+        ├─> [Reset workspace] requires confirmation and removes local feedback history
+        └─> [Get Feedback] saves a feedback entry for the current draft
+              ├─> Strengths
+              ├─> Grammar and clarity
+              ├─> More natural wording
+              ├─> Relevant lesson vocabulary
+              └─> Revision suggestions (no marks, scores, or grades)
+```
