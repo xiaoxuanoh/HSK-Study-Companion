@@ -204,39 +204,49 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const renderPassage = () => {
     const highlights = lesson.sections.passage.vocabularyHighlights as Record<string, string>;
     return (
-      <div className="space-y-4">
-        {(lesson.sections.passage.paragraphs as PassageParagraph[]).map((p) => {
-          const parts = p.text.split(/(爽快|嚷嚷|拿手|郑重|疑惑|反问|瞬间|意识|忽略|宽容|嫉妒|嘲笑|讨好|附和|融洽|亲密|固然|督促|约束|启示|和睦)/g);
-          return (
-            <p key={p.id} className="relative text-[17px] leading-8 text-ink">
-              {parts.map((part, idx) => {
-                if (highlights[part]) {
-                  return (
-                    <button
-                      key={`${p.id}-${idx}`}
-                      type="button"
-                      aria-haspopup="dialog"
-                      aria-expanded={popupWord === part}
-                      onClick={(e) => {
-                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                        vocabTriggerRef.current = e.currentTarget;
-                        setSelectedGrammarId(null);
-                        setGrammarPopupPos(null);
-                        setPopupWord(part);
-                        setPopupPos(getPopupPosition(rect));
-                      }}
-                      className="rounded bg-amber-100 px-1 hover:bg-amber-200"
-                    >
-                      {part}
-                    </button>
-                  );
-                }
-                return <span key={`${p.id}-${idx}`}>{part}</span>;
-              })}
-            </p>
-          );
-        })}
-      </div>
+      <article className="mt-4 max-w-4xl overflow-hidden rounded-xl border border-stone-200 bg-card shadow-sm">
+        <div className="border-b border-stone-200 bg-paper/60 px-5 py-3 sm:px-7">
+          <p className="text-sm leading-6 text-muted">
+            <span className="border-b-2 border-accent/70 font-medium text-ink">带下划线的词语</span>
+            可以点击查看详情。 Select an underlined word to view details or ask the AI tutor.
+          </p>
+        </div>
+        <div className="space-y-5 p-5 sm:p-7">
+          {(lesson.sections.passage.paragraphs as PassageParagraph[]).map((p) => {
+            const parts = p.text.split(/(爽快|嚷嚷|拿手|郑重|疑惑|反问|瞬间|意识|忽略|宽容|嫉妒|嘲笑|讨好|附和|融洽|亲密|固然|督促|约束|启示|和睦)/g);
+            return (
+              <p key={p.id} className="relative text-lg leading-9 text-ink">
+                {parts.map((part, idx) => {
+                  if (highlights[part]) {
+                    return (
+                      <button
+                        key={`${p.id}-${idx}`}
+                        type="button"
+                        aria-haspopup="dialog"
+                        aria-expanded={popupWord === part}
+                        onClick={(e) => {
+                          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                          vocabTriggerRef.current = e.currentTarget;
+                          setSelectedGrammarId(null);
+                          setGrammarPopupPos(null);
+                          setPopupWord(part);
+                          setPopupPos(getPopupPosition(rect));
+                        }}
+                        className={`rounded-sm border-b-2 border-accent/70 px-0.5 font-medium text-ink transition-colors focus-visible:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
+                          popupWord === part ? "bg-accent/15" : "hover:bg-accent/10"
+                        }`}
+                      >
+                        {part}
+                      </button>
+                    );
+                  }
+                  return <span key={`${p.id}-${idx}`}>{part}</span>;
+                })}
+              </p>
+            );
+          })}
+        </div>
+      </article>
     );
   };
 
@@ -318,7 +328,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             </ol>
           )}
 
-          {section === "passage" && <div className="mt-4">{renderPassage()}</div>}
+          {section === "passage" && renderPassage()}
 
           {section === "vocabulary" && (
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

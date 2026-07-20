@@ -35,7 +35,7 @@ data/
 | Type | Description |
 |------|-------------|
 | `warmup` | Discussion prompts before the passage, presented together in a card with one clearly separated row per prompt |
-| `passage` | Text paragraphs with vocabulary highlights map |
+| `passage` | Text paragraphs in a reading card with a vocabulary map rendered as persistent sage-underlined word controls |
 | `vocabulary` | Vocabulary items with pinyin, POS, meaning, examples, synonyms |
 | `grammar` | Grammar notes with structure, logic, tone, example, breakdown |
 | `word_distinction` | Near-synonym comparison groups |
