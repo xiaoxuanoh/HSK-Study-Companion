@@ -46,7 +46,7 @@ export type LessonData = {
       correctionNote: string;
     };
     expansion: LessonSection & {
-      reading: { content: string; translation: string };
+      reading: { title: string; content: string; translation: string };
     };
     notebook: LessonSection & { savedItems?: unknown[] };
   };

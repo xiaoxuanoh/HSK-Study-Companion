@@ -41,7 +41,7 @@ data/
 | `word_distinction` | Near-synonym comparison groups |
 | `exercise` | Questions with options, correct answer, and reasoning |
 | `writing` | Writing prompt with plan, patterns, a locally autosaved draft, and supportive feedback history |
-| `expansion` | Extended reading or listening content |
+| `expansion` | Extended reading in a comfortable reading card, with larger Chinese typography and a visually distinct translation |
 
 My Notebook is a course-wide learner workspace rather than a lesson content block. Notebook items retain their source-lesson relationship while being accessed from the dedicated `/notebook` page.
 

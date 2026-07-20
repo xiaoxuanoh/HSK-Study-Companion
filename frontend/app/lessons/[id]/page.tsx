@@ -472,9 +472,18 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           )}
 
           {section === "expansion" && (
-            <article className="mt-4 space-y-3 rounded-lg border border-stone-200 bg-card p-4 text-sm">
-              <p className="text-ink">{lesson.sections.expansion.reading.content}</p>
-              <p className="text-muted">{lesson.sections.expansion.reading.translation}</p>
+            <article className="mt-4 max-w-4xl overflow-hidden rounded-xl border border-stone-200 bg-card shadow-sm">
+              <header className="border-b border-stone-200 bg-paper/60 px-5 py-4 sm:px-7">
+                <h3 className="font-semibold text-ink">{lesson.sections.expansion.reading.title}</h3>
+              </header>
+              <div className="p-5 sm:p-7">
+                <p className="text-lg leading-9 text-ink" lang="zh-CN">
+                  {lesson.sections.expansion.reading.content}
+                </p>
+                <p className="mt-6 text-base leading-8 text-muted">
+                  {lesson.sections.expansion.reading.translation}
+                </p>
+              </div>
             </article>
           )}
 
