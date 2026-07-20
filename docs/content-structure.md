@@ -34,7 +34,7 @@ data/
 
 | Type | Description |
 |------|-------------|
-| `warmup` | Discussion prompts before the passage |
+| `warmup` | Discussion prompts before the passage, presented together in a card with one clearly separated row per prompt |
 | `passage` | Text paragraphs with vocabulary highlights map |
 | `vocabulary` | Vocabulary items with pinyin, POS, meaning, examples, synonyms |
 | `grammar` | Grammar notes with structure, logic, tone, example, breakdown |

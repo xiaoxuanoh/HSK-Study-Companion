@@ -300,14 +300,22 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           <h2 className="text-xl font-semibold text-ink">{lesson.sections[section].title}</h2>
 
           {section === "warmup" && (
-            <ul className="mt-4 list-disc space-y-2 pl-6 text-ink">
-              {(lesson.sections.warmup.prompts as WarmupPrompt[]).map((p) => (
-                <li key={p.id}>
-                  <p>{p.chinese}</p>
-                  <p className="text-sm text-muted">{p.english}</p>
+            <ol className="mt-4 overflow-hidden rounded-xl border border-stone-200 bg-card shadow-sm">
+              {(lesson.sections.warmup.prompts as WarmupPrompt[]).map((p, index) => (
+                <li key={p.id} className="flex items-start gap-3 border-b border-stone-200 p-4 last:border-b-0 sm:gap-4 sm:p-5">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper text-sm font-semibold text-accent-hover"
+                  >
+                    {index + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[17px] font-medium leading-7 text-ink">{p.chinese}</p>
+                    <p className="mt-1 text-sm leading-6 text-muted">{p.english}</p>
+                  </div>
                 </li>
               ))}
-            </ul>
+            </ol>
           )}
 
           {section === "passage" && <div className="mt-4">{renderPassage()}</div>}
