@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import LessonOverviewModal from "@/components/LessonOverviewModal";
 import { getLessons } from "@/lib/api";
 import type { LessonSummary } from "@/lib/types";
@@ -32,13 +32,19 @@ function groupByUnit(lessons: LessonSummary[]): UnitGroup[] {
 export default function DashboardPage() {
   const [units, setUnits] = useState<UnitGroup[]>([]);
   const [selected, setSelected] = useState<LessonSummary | null>(null);
+  const modalTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     getLessons().then((lessons) => setUnits(groupByUnit(lessons)));
   }, []);
 
+  const closeLessonModal = useCallback(() => {
+    setSelected(null);
+    window.requestAnimationFrame(() => modalTriggerRef.current?.focus());
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-[100dvh] min-w-0 flex-col">
       {/* Top bar */}
       <header className="sticky top-0 z-40 border-b border-stone-200 bg-paper px-4 py-2.5 sm:px-6 sm:py-3">
         <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3">
@@ -56,50 +62,58 @@ export default function DashboardPage() {
       </header>
 
       {/* One horizontally scrollable row per unit */}
-      <main className="flex-1 py-8 space-y-10">
+      <main className="flex-1 space-y-10 py-6 sm:py-8">
         {units.map((unit) => (
-          <section key={unit.unit_number}>
-            <div className="flex gap-6 overflow-x-auto px-6 pb-2 items-start">
+          <section key={unit.unit_number} className="px-4 sm:px-6">
+            <div className="flex min-w-0 flex-col items-start gap-4 lg:flex-row lg:gap-6">
               {/* Inline unit header — no box, top-aligned */}
-              <div className="shrink-0 w-52 pt-1">
+              <div className="w-full shrink-0 pt-1 lg:w-52">
                 <p className="text-sm text-muted">Unit {unit.unit_number}</p>
-                <p className="text-3xl font-bold text-ink leading-tight">{unit.unit_title_chinese}</p>
+                <p className="text-2xl font-bold leading-tight text-ink sm:text-3xl">{unit.unit_title_chinese}</p>
                 <p className="text-base text-muted mt-1">{unit.unit_title_english}</p>
               </div>
 
               {/* Lesson cards */}
-              {unit.lessons.map((lesson) => (
-                <article
-                  key={lesson.id}
-                  onClick={() => setSelected(lesson)}
-                  className="w-80 shrink-0 rounded-xl border border-stone-200 bg-card hover:bg-card-hover cursor-pointer p-5 shadow-sm transition-colors duration-150 flex flex-col"
-                >
-                  <p className="text-sm text-muted">Lesson {lesson.lesson_number}</p>
-                  <h2 className="mt-1 text-xl font-semibold text-ink leading-snug whitespace-nowrap overflow-hidden text-ellipsis">
-                    {lesson.lesson_title_chinese}
-                  </h2>
-                  <p className="text-base text-muted mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
-                    {lesson.lesson_title_english}
-                  </p>
+              <div className="grid w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:overflow-x-auto lg:pb-2">
+                {unit.lessons.map((lesson) => (
+                  <button
+                    key={lesson.id}
+                    type="button"
+                    aria-haspopup="dialog"
+                    aria-expanded={selected?.id === lesson.id}
+                    onClick={(event) => {
+                      modalTriggerRef.current = event.currentTarget;
+                      setSelected(lesson);
+                    }}
+                    className="flex min-h-36 w-full min-w-0 flex-col rounded-xl border border-stone-200 bg-card p-5 text-left shadow-sm transition-colors duration-150 hover:bg-card-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-paper lg:w-80 lg:shrink-0"
+                  >
+                    <p className="text-sm text-muted">Lesson {lesson.lesson_number}</p>
+                    <span className="mt-1 block w-full overflow-hidden text-ellipsis whitespace-nowrap text-xl font-semibold leading-snug text-ink">
+                      {lesson.lesson_title_chinese}
+                    </span>
+                    <p className="mt-1 w-full overflow-hidden text-ellipsis whitespace-nowrap text-base text-muted">
+                      {lesson.lesson_title_english}
+                    </p>
 
-                  {/* Progress bar pinned to bottom */}
-                  <div className="mt-auto pt-4">
-                    <div className="h-1.5 w-full rounded-full bg-stone-200 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-accent"
-                        style={{ width: `${lesson.progress}%` }}
-                      />
+                    {/* Progress bar pinned to bottom */}
+                    <div className="mt-auto w-full pt-4">
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-200">
+                        <div
+                          className="h-full rounded-full bg-accent"
+                          style={{ width: `${lesson.progress}%` }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
           </section>
         ))}
       </main>
 
       {selected ? (
-        <LessonOverviewModal lesson={selected} onClose={() => setSelected(null)} />
+        <LessonOverviewModal lesson={selected} onClose={closeLessonModal} />
       ) : null}
     </div>
   );

@@ -7,6 +7,7 @@
 - `/dashboard` — Lesson dashboard
 - `/lessons/[id]` — Lesson study page (three-panel layout)
 - `/notebook` — Course-wide notebook workspace
+- `/notebook/[lessonId]` — Complete saved-note collection for one lesson (or standalone notes)
 
 ### Key Components
 - `ThreePanel` — three-column layout wrapper
@@ -19,8 +20,10 @@
 
 ### State Management
 - React local state for current section, selected item, exercise answers, and AI panel content
+- AI messages and current focus survive Tutor close/reopen during the mounted lesson visit; confirmed clearing resets them, while leaving or reloading the lesson starts fresh
 - `frontend/lib/notebook.ts` provides a versioned local-storage repository and React subscription hook for course-wide notebook data
 - Notebook UI depends on the `NotebookRepository` interface so browser storage can later be replaced by an account-backed implementation
+- The course-wide overview shows up to three recent, fixed-size cards per collection in a horizontal row followed by a persistent View All tile; long content and item management live in an accessible details dialog
 - No external state library needed for the prototype
 
 ### API

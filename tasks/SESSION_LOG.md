@@ -1,5 +1,96 @@
 # Session Log
 
+## 2026-07-21 — Notebook Lesson Shelves and Full Collections
+
+- Replaced the downward-growing Notebook group grids with horizontal lesson shelves.
+- Each shelf orders notes by most recently updated, previews at most three fixed-size cards, and places a same-size `View all notes` tile immediately after the final preview even when fewer than three notes exist.
+- Added a small saved-note count beneath each collection heading while retaining the source-lesson link.
+- Added `/notebook/[lessonId]` collection pages with every saved note for that lesson, collection-specific search and type filters, and a standalone-note equivalent.
+- Standardized every note card at a fixed height and clamped preview content so long notes cannot resize the layout.
+- Added an accessible complete-note dialog; editing, confirmed removal, and full exercise review remain available from the dialog without expanding the preview card.
+- After visual review, shortened cards from 25rem to 21rem and then to 18rem, tightened mistake-answer panels, replaced preview remark text with a Yes/No status, exposed confirmed removal on every card, removed the box treatment from the inline View All selection, and brought its arrow and text into a tighter group.
+- Audited Notebook text actions for hover feedback. Existing source, details, remove, dialog, and navigation actions already darken or change background; corrected View All so its green label darkens on hover and its supporting text shifts from muted to ink.
+- The learner visually approved the compact 18rem cards, unboxed View All selection, tighter action grouping, visible removal, Yes/No remark status, and hover feedback.
+- Frontend ESLint, TypeScript, backend pytest, `git diff --check`, and an isolated Next.js webpack production build pass, including the new dynamic collection route.
+- A fresh remote fetch confirmed `agent/add-lesson-navigation` and its upstream were synchronized at `5e507ff` before publishing this checkpoint.
+
+### Exact Next Step
+
+- The complete reviewed checkpoint was approved for commit and push on `agent/add-lesson-navigation`. Continue with the next user-directed refinement after publication.
+
+## 2026-07-21 — Responsive Review Follow-up and AI Chat Retention
+
+- Completed the responsive/accessibility commit-readiness review and incorporated the learner's mobile visual feedback.
+- Changed the compact lesson header so Dashboard and My Notebook stack in a right-hand column beside the lesson identity below the `sm` breakpoint, with reduced mobile type, padding, spacing, and control height; wider layouts retain the horizontal navigation and its original sizing.
+- Unified the horizontally scrolling mobile section strip on one continuous warm-card background, removed block-style mobile hover coloring, and changed its active state to an accent underline; the desktop sidebar retains its white-card active treatment.
+- Closing the AI Tutor now preserves its messages and current focus for the current lesson visit.
+- Added a confirmed `Clear chat` action; leaving or reloading the lesson still starts a fresh conversation, avoiding undeclared long-term chat persistence.
+- Kept the Tutor modal with trapped focus below `xl`, but made the wide-screen inline Tutor a complementary panel so keyboard users can return to lesson content while the conversation stays open.
+- Corrected lesson-card markup so the interactive button no longer contains a heading element.
+- The learner visually confirmed the unified mobile section-strip treatment looks better.
+- Validation passed: ESLint, TypeScript, backend pytest (1 test), `git diff --check`, and an isolated Next.js webpack production build with all expected routes.
+
+### Exact Next Step
+
+- Superseded by the later Notebook shelf refinement above; preserve this reviewed work in the same uncommitted working tree.
+
+## 2026-07-21 — Lesson Card and Popup Action Refinement
+
+- Standardized vocabulary and grammar card interiors so titles, badges/pronunciation, and descriptions occupy stable top-aligned regions; longer definitions no longer shift the main term vertically.
+- Moved vocabulary and grammar detail actions into compact sticky headers so `Explain More`, `Add to Notebook` / saved state, and `Close` remain available while long content scrolls.
+- Added `Explain More` support to grammar details and connected it to the contextual AI Tutor flow.
+- Removed the popup header/content divider and reduced action height, font size, padding, and gaps after visual review; responsive wrapping remains available for narrow layouts.
+- Selectively committed and pushed the reviewed scope as `5e507ff` (`Refine lesson cards and popup actions`). The branch and upstream are synchronized at that commit.
+- The exact staged snapshot passed ESLint and the isolated Next.js production webpack build; targeted TypeScript validation and `git diff --check` also passed during implementation.
+- Older responsive/accessibility work remains uncommitted in `frontend/app/dashboard/page.tsx`, `frontend/app/globals.css`, `frontend/app/lessons/[id]/page.tsx`, `frontend/app/page.tsx`, `frontend/components/AITutorPanel.tsx`, and `frontend/components/LessonOverviewModal.tsx`. Preserve it and review it as its own future scope.
+
+### Exact Next Step
+
+- Continue user-directed detail refinement, or audit the preserved responsive/accessibility changes as a separate scope before committing them. The future shared brand/logo header remains discussed but unimplemented.
+
+## 2026-07-21 — Navigation Polish
+
+- Refined and pushed the Dashboard header and lesson sidebar as `6b8e3b3`.
+- Dashboard now uses the shared compact header treatment, a centered `max-w-5xl` container, “HSK Study Companion” eyebrow, simplified “Dashboard” title, and existing Notebook action.
+- Increased the desktop lesson sidebar from 220px to 256px so the selected “词语辨析 Word Distinction” label remains fully contained by its highlight.
+- Selectively staged only these two reviewed changes; older responsive/accessibility work remains uncommitted.
+- The exact staged snapshot passed ESLint, TypeScript, and the isolated Next.js production webpack build.
+
+## 2026-07-20 — Eight-Point Lesson Refinement, Points 1–8
+
+- Worked on `agent/add-lesson-navigation`; all eight point-specific commits were pushed through `c5b3e38`.
+- Completed and pushed the eight agreed refinement points:
+  1. `167b6a7` — persistent lesson toolbar with Dashboard return, lesson identity, Notebook access, and per-lesson section restoration.
+  2. `c8ee1f7` — moved My Notebook out of lesson navigation into the dedicated course-wide `/notebook` workspace.
+  3. `e3829bb` — renamed the vocabulary action to “Add to Notebook,” displayed saved state, and prevented duplicates.
+  4. `ebf4b23` — built the systematic Notebook: search, type filters, source-lesson grouping and links, editable remarks, standalone notes, confirmed removal, versioned browser persistence, grammar/mistake saving, and exercise review.
+  5. `a4fec4d` — presented all Warm-up prompts in one bordered card with numbered, separated bilingual rows.
+  6. `5133f75` — presented the Passage in a comfortable reading card with persistent sage-underlined vocabulary controls, subtle hover/focus states, and bilingual interaction guidance.
+- Clarified that current passage highlights are vocabulary entries. The `phrase` Notebook type remains future-ready; arbitrary text selection and contextual “Add to Notebook / Ask AI Tutor” actions are deferred until after all eight points.
+- Discussed a future right-side visual companion rail. It should preserve readable passage width, and a future desktop AI Tutor overlay should cover the visual rail instead of pushing or resizing the passage.
+- Implemented and pushed point 7 as `ca2888d`:
+  - Added a large Writing/Application editor with a live character counter and browser-local autosave.
+  - Added confirmed Clear draft and Reset workspace controls.
+  - Added a “Get Feedback” workflow with strengths, grammar/clarity, natural wording, lesson vocabulary, and revision guidance without scores or grades.
+  - Retained the current lesson draft, submitted draft snapshots, and complete feedback history in a versioned, replaceable browser-storage repository.
+- Implemented and pushed point 8 as `c5b3e38`:
+  - Matched the Expansion card width, border, spacing, and shadow to the Passage reading treatment.
+  - Increased the Chinese reading to `text-lg` with a comfortable `leading-9` line height.
+  - Kept the English translation in the same content body as the Chinese reading, distinguished through spacing, muted color, and readable `text-base` / `leading-8` typography without an extra label.
+
+### Validation and Environment Notes
+
+- Scoped staged snapshots for points 4–6 passed ESLint, TypeScript, and production webpack builds before commit.
+- Point 7 passes ESLint and an isolated Next.js production webpack build.
+- Point 8 passes ESLint and an isolated Next.js production webpack build.
+- Running a production build in the main frontend directory while `next dev` was active caused the dev server to serve stale `.next/dev` output. Restarting the dev server restored the current Warm-up card.
+- When the dev server must remain active, validate a production build from an isolated temporary checkout/copy with the repository-level `data/` directory and the installed frontend dependencies available.
+- Unrelated responsive/accessibility work remains uncommitted in the working tree. Preserve it while staging future point-specific commits. Current modified application paths include landing/dashboard/global styles, the lesson page, AI Tutor, and the lesson overview modal.
+
+### Exact Next Step
+
+- All eight agreed refinement points are now implemented and published. Choose the next scope while preserving the unrelated responsive/accessibility work still present in the working tree.
+
 ## 2026-07-17 — Upgraded Baseline Reconfirmed
 
 - Reconfirmed the Next.js 16 baseline without changing application code.

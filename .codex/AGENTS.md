@@ -6,7 +6,7 @@ Build a polished first-draft HSK self-study website that provides teacher-style 
 
 ## Current Priority
 
-Continue refining the tested prototype's UI, lesson flow, mobile layout, writing experience, and accessibility. Supabase work is paused on `feature/supabase-integration`; do not merge, extend, or activate it unless the user explicitly resumes that work.
+The latest `agent/add-lesson-navigation` checkpoint includes all eight lesson-refinement points, navigation/card/popup polish, the reviewed responsive/accessibility and AI-chat work, and the learner-approved Notebook shelf refinement: three horizontal previews, an unboxed View All selection, fixed-size detail cards, and lesson collection routes. Supabase work remains paused on `feature/supabase-integration`; do not merge, extend, or activate it unless the user explicitly resumes that work.
 
 ## Build Principles
 
@@ -34,8 +34,9 @@ See docs/explanation-style.md for full templates.
 - Landing page
 - Dashboard with lesson cards
 - Lesson overview modal
-- Lesson study page (three-panel layout)
-- Sections: Warm-up, Passage, Vocabulary, Grammar Notes, Word Distinction, Exercises, Writing, Expansion, Notebook
+- Lesson study page with section navigation, content, and mock AI tutor
+- Sections: Warm-up, Passage, Vocabulary, Grammar Notes, Word Distinction, Exercises, Writing, Expansion
+- Dedicated course-wide My Notebook page with versioned browser persistence
 - Clickable vocabulary popups in Passage section
 - AI tutor panel with mock responses
 - FastAPI backend with mock endpoints
@@ -63,8 +64,16 @@ See docs/explanation-style.md for full templates.
 
 **Do NOT commit automatically.** Only create git commits when the user explicitly asks. After making changes, summarize what was changed and wait for review.
 
+### GitHub Publishing
+
+- Direct Git commits and pushes to `origin` are supported through the configured HTTPS remote and macOS Keychain credential helper.
+- The GitHub CLI (`gh`) is not installed and is not required for ordinary `git commit` or `git push` operations. Only treat it as a prerequisite when a GitHub-specific operation such as opening or managing a pull request actually requires it.
+- Before reporting a GitHub authentication blocker, verify the branch/upstream with `git status -sb` and `git branch -vv`; use the existing tracked remote for an explicitly requested push.
+
 ## Current Branch State
 
 - `main` and `origin/main` contain the tested Next.js 16 security upgrade at `e41f637`.
+- `agent/add-lesson-navigation` and its upstream contain all eight completed refinement points plus Dashboard/sidebar, lesson-card/popup, responsive/accessibility, AI-chat, and Notebook shelf/collection refinements in the latest published checkpoint.
+- The latest checkpoint passes ESLint, TypeScript, backend pytest, `git diff --check`, and an isolated production build.
 - `feature/supabase-integration` contains the paused Supabase foundation at `3cbccf6` and is not part of `main`.
 - Do not assume pushing `main` includes or activates Supabase.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -8,6 +8,7 @@ type Props = {
   currentFocus: string;
   messages: Message[];
   onAsk: (query: string) => void;
+  onClear: () => void;
   onClose: () => void;
 };
 
@@ -20,9 +21,24 @@ const suggestions = [
   "Make a mini quiz",
 ];
 
-export default function AITutorPanel({ currentFocus, messages, onAsk, onClose }: Props) {
+export default function AITutorPanel({ currentFocus, messages, onAsk, onClear, onClose }: Props) {
   const [input, setInput] = useState("");
+  const [isModal, setIsModal] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 1279px)");
+    const updateMode = () => setIsModal(mediaQuery.matches);
+    updateMode();
+    mediaQuery.addEventListener("change", updateMode);
+    return () => mediaQuery.removeEventListener("change", updateMode);
+  }, []);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [currentFocus]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,30 +51,81 @@ export default function AITutorPanel({ currentFocus, messages, onAsk, onClose }:
     setInput("");
   };
 
+  const handleClear = () => {
+    if (messages.length === 0) return;
+    if (!window.confirm("Clear this AI Tutor conversation?")) return;
+    setInput("");
+    onClear();
+    window.requestAnimationFrame(() => inputRef.current?.focus());
+  };
+
+  const handlePanelKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onClose();
+      return;
+    }
+    if (!isModal || event.key !== "Tab" || !panelRef.current) return;
+    const controls = Array.from(
+      panelRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+    const first = controls[0];
+    const last = controls.at(-1);
+    if (!first || !last) return;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
-    <div className="flex h-full flex-col">
+    <div
+      id="ai-tutor-panel"
+      ref={panelRef}
+      role={isModal ? "dialog" : "complementary"}
+      aria-modal={isModal || undefined}
+      aria-labelledby="ai-tutor-title"
+      className="flex h-full flex-col"
+      onKeyDown={handlePanelKeyDown}
+    >
       {/* Header */}
       <div className="flex items-start justify-between border-b border-stone-200 px-4 py-3 shrink-0">
         <div>
           <p className="text-xs text-muted">AI Tutor</p>
-          <h3 className="text-xl font-semibold text-ink">
+          <h3 id="ai-tutor-title" className="text-xl font-semibold text-ink">
             {currentFocus || "Study Assistant"}
           </h3>
         </div>
-        <button
-          onClick={onClose}
-          className="flex h-7 w-7 items-center justify-center rounded-full text-muted hover:bg-card-hover hover:text-ink"
-          aria-label="Close"
-        >
-          ✕
-        </button>
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={messages.length === 0}
+            className="min-h-11 rounded-lg px-2 text-xs font-medium text-muted hover:bg-card-hover hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Clear chat
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-card-hover hover:text-ink"
+            aria-label="Close AI tutor"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4" aria-live="polite" aria-relevant="additions">
         {messages.length === 0 && (
           <p className="text-sm text-muted">
-            Click a vocabulary word and tap &ldquo;Explain More&rdquo; to start.
+            Select a vocabulary word and choose &ldquo;Explain More&rdquo;, or type a question below.
           </p>
         )}
         {messages.map((msg, idx) =>
@@ -84,7 +151,7 @@ export default function AITutorPanel({ currentFocus, messages, onAsk, onClose }:
             <button
               key={s}
               onClick={() => onAsk(s)}
-              className="rounded border border-stone-200 px-2 py-1 text-xs text-ink hover:bg-card-hover"
+              className="min-h-11 rounded border border-stone-200 px-3 py-2 text-xs text-ink hover:bg-card-hover"
             >
               {s}
             </button>
@@ -93,18 +160,22 @@ export default function AITutorPanel({ currentFocus, messages, onAsk, onClose }:
       )}
 
       {/* Input */}
-      <div className="shrink-0 border-t border-stone-200 px-4 py-3 flex gap-2">
+      <div className="flex shrink-0 gap-2 border-t border-stone-200 px-3 py-3 sm:px-4">
+        <label htmlFor="ai-tutor-input" className="sr-only">Ask the AI tutor a question</label>
         <input
+          id="ai-tutor-input"
+          ref={inputRef}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Ask a follow-up question..."
-          className="flex-1 rounded border border-stone-200 bg-paper px-3 py-2 text-sm text-ink placeholder:text-muted focus:outline-none focus:border-accent"
+          className="min-h-11 min-w-0 flex-1 rounded border border-stone-200 bg-paper px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-accent focus:outline-none"
         />
         <button
+          type="button"
           onClick={handleSend}
-          className="rounded bg-accent px-3 py-2 text-xs text-white hover:bg-accent-hover"
+          className="min-h-11 rounded bg-accent px-4 py-2 text-xs text-white hover:bg-accent-hover"
         >
           Send
         </button>

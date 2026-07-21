@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useRef, useState } from "react";
-import ExerciseReviewModal from "@/components/ExerciseReviewModal";
+import { useMemo, useState } from "react";
+import NotebookCard from "@/components/NotebookCard";
 import {
   type NotebookItem,
   type NotebookItemType,
@@ -11,14 +11,6 @@ import {
 } from "@/lib/notebook";
 
 type FilterValue = "all" | NotebookItemType;
-
-const typeLabels: Record<NotebookItemType, string> = {
-  vocabulary: "Vocabulary",
-  phrase: "Phrases",
-  grammar: "Grammar",
-  mistake: "Mistakes",
-  "personal-note": "Personal Notes",
-};
 
 const filters: Array<{ value: FilterValue; label: string }> = [
   { value: "all", label: "All" },
@@ -34,169 +26,6 @@ type NotebookGroup = {
   source?: NotebookSource;
   items: NotebookItem[];
 };
-
-function NotebookCard({
-  item,
-  onUpdateNote,
-  onRemove,
-}: {
-  item: NotebookItem;
-  onUpdateNote: (id: string, note: string) => void;
-  onRemove: (id: string) => void;
-}) {
-  const [editingNote, setEditingNote] = useState(false);
-  const [noteDraft, setNoteDraft] = useState(item.personalNote);
-  const [confirmingRemoval, setConfirmingRemoval] = useState(false);
-  const [showQuestion, setShowQuestion] = useState(false);
-  const viewQuestionButtonRef = useRef<HTMLButtonElement>(null);
-  const noteLabel = item.type === "personal-note" ? "Note" : "Personal remark";
-
-  const closeQuestion = useCallback(() => {
-    setShowQuestion(false);
-    window.requestAnimationFrame(() => viewQuestionButtonRef.current?.focus());
-  }, []);
-
-  const saveNote = () => {
-    const nextNote = noteDraft.trim();
-    onUpdateNote(item.id, nextNote);
-    setNoteDraft(nextNote);
-    setEditingNote(false);
-  };
-
-  return (
-    <article className="flex min-w-0 flex-col rounded-xl border border-stone-200 bg-card p-4 shadow-sm">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">{typeLabels[item.type]}</p>
-          <h3 className="mt-1 break-words text-lg font-semibold text-ink">{item.title}</h3>
-          {item.pinyin ? <p className="mt-0.5 text-sm text-muted">{item.pinyin}</p> : null}
-        </div>
-        <time className="text-xs text-muted" dateTime={item.createdAt}>
-          {new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(new Date(item.createdAt))}
-        </time>
-      </div>
-
-      {item.summary ? <p className="mt-3 text-sm leading-6 text-ink">{item.summary}</p> : null}
-      {item.structure ? (
-        <div className="mt-3 rounded-lg bg-paper p-3 text-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">Structure</p>
-          <p className="mt-1 font-medium text-ink">{item.structure}</p>
-        </div>
-      ) : null}
-      {item.type === "mistake" ? (
-        <div className="mt-3">
-          <dl className="space-y-2 rounded-lg bg-paper p-3 text-sm">
-            {item.myAnswer ? (
-              <div>
-                <dt className="font-semibold text-muted">Your selection</dt>
-                <dd className="mt-0.5 font-medium text-rose-700">{item.myAnswer}</dd>
-              </div>
-            ) : null}
-            {item.correctAnswer ? (
-              <div>
-                <dt className="font-semibold text-muted">Correct answer</dt>
-                <dd className="mt-0.5 font-medium text-accent-hover">{item.correctAnswer}</dd>
-              </div>
-            ) : null}
-          </dl>
-
-          {item.exerciseContext ? (
-            <button
-              ref={viewQuestionButtonRef}
-              type="button"
-              aria-haspopup="dialog"
-              aria-expanded={showQuestion}
-              onClick={() => setShowQuestion(true)}
-              className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:text-accent-hover"
-            >
-              <span aria-hidden="true">↗</span>
-              View question
-            </button>
-          ) : null}
-        </div>
-      ) : null}
-
-      <div className="mt-auto border-t border-stone-200 pt-4">
-        {editingNote ? (
-          <div>
-            <label htmlFor={`notebook-note-${item.id}`} className="text-xs font-semibold uppercase tracking-wide text-muted">
-              {noteLabel}
-            </label>
-            <textarea
-              id={`notebook-note-${item.id}`}
-              value={noteDraft}
-              onChange={(event) => setNoteDraft(event.target.value)}
-              rows={3}
-              className="mt-2 w-full resize-y rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm leading-5 text-ink"
-              placeholder={item.type === "personal-note" ? "Write your note…" : "Add a memory aid, example, or reminder…"}
-            />
-            <div className="mt-2 flex flex-wrap gap-2">
-              <button type="button" onClick={saveNote} className="min-h-11 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover">
-                Save {item.type === "personal-note" ? "note" : "remark"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setNoteDraft(item.personalNote);
-                  setEditingNote(false);
-                }}
-                className="min-h-11 rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-ink hover:bg-paper"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div>
-            {item.personalNote ? (
-              <p className="text-sm leading-6 text-muted">
-                <span className="font-semibold text-ink">{noteLabel}:</span> {item.personalNote}
-              </p>
-            ) : (
-              <p className="text-sm text-muted">No personal remark yet.</p>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                setNoteDraft(item.personalNote);
-                setEditingNote(true);
-              }}
-              className="mt-2 min-h-11 text-sm font-medium text-accent hover:text-accent-hover"
-            >
-              {item.personalNote
-                ? `Edit ${item.type === "personal-note" ? "note" : "remark"}`
-                : "Add remark"}
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-3 border-t border-stone-200 pt-3">
-        {confirmingRemoval ? (
-          <div className="rounded-lg border border-rose-200 bg-rose-50 p-3" role="alert">
-            <p className="text-sm font-medium text-rose-800">Remove this item from My Notebook?</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <button type="button" onClick={() => onRemove(item.id)} className="min-h-11 rounded-lg bg-rose-700 px-4 py-2 text-sm font-medium text-white hover:bg-rose-800">
-                Yes, remove
-              </button>
-              <button type="button" onClick={() => setConfirmingRemoval(false)} className="min-h-11 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-paper">
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button type="button" onClick={() => setConfirmingRemoval(true)} className="min-h-11 text-sm font-medium text-rose-700 hover:text-rose-800">
-            Remove from Notebook
-          </button>
-        )}
-      </div>
-
-      {showQuestion && item.exerciseContext ? (
-        <ExerciseReviewModal item={item} onClose={closeQuestion} />
-      ) : null}
-    </article>
-  );
-}
 
 export default function NotebookPage() {
   const { items, addItem, updatePersonalNote, removeItem } = useNotebook();
@@ -244,12 +73,24 @@ export default function NotebookPage() {
       group.items.push(item);
       grouped.set(key, group);
     }
-    return [...grouped.values()].sort((left, right) => {
+    return [...grouped.values()].map((group) => ({
+      ...group,
+      items: group.items.sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt)),
+    })).sort((left, right) => {
       if (!left.source) return 1;
       if (!right.source) return -1;
       return left.source.lessonNumber - right.source.lessonNumber;
     });
   }, [filteredItems]);
+
+  const groupCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const item of items) {
+      const key = item.source?.lessonId ?? "standalone";
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    return counts;
+  }, [items]);
 
   const createStandaloneNote = () => {
     const title = noteTitle.trim();
@@ -386,11 +227,17 @@ export default function NotebookPage() {
                         <p className="text-sm text-muted">Lesson {group.source.lessonNumber}</p>
                         <h2 id={`notebook-group-${group.key}`} className="text-xl font-semibold">{group.source.titleChinese}</h2>
                         <p className="mt-1 text-sm text-muted">{group.source.titleEnglish}</p>
+                        <p className="mt-1 text-xs text-muted">
+                          {groupCounts.get(group.key) ?? 0} saved {(groupCounts.get(group.key) ?? 0) === 1 ? "note" : "notes"}
+                        </p>
                       </>
                     ) : (
                       <>
                         <p className="text-sm text-muted">Course-wide</p>
                         <h2 id={`notebook-group-${group.key}`} className="text-xl font-semibold">Standalone Notes</h2>
+                        <p className="mt-1 text-xs text-muted">
+                          {groupCounts.get(group.key) ?? 0} saved {(groupCounts.get(group.key) ?? 0) === 1 ? "note" : "notes"}
+                        </p>
                       </>
                     )}
                   </div>
@@ -401,15 +248,28 @@ export default function NotebookPage() {
                   ) : null}
                 </div>
 
-                <div className="mt-4 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {group.items.map((item) => (
+                <div
+                  className="-mx-4 mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0"
+                  aria-label={`${group.source ? `Lesson ${group.source.lessonNumber}` : "Standalone"} note previews`}
+                >
+                  {group.items.slice(0, 3).map((item) => (
                     <NotebookCard
                       key={item.id}
                       item={item}
                       onUpdateNote={updatePersonalNote}
                       onRemove={removeItem}
+                      className="w-[82vw] max-w-[21rem] shrink-0 snap-start sm:w-80 lg:w-[calc((100%_-_2rem)/3)] lg:max-w-none"
                     />
                   ))}
+                  <Link
+                    href={`/notebook/${group.key}`}
+                    className="group flex h-[18rem] w-[82vw] max-w-[21rem] shrink-0 snap-start flex-col items-center justify-center p-6 text-center text-accent transition-colors hover:text-accent-hover sm:w-80 lg:w-[calc((100%_-_2rem)/3)] lg:max-w-none"
+                    aria-label={`View all notes for ${group.source ? `Lesson ${group.source.lessonNumber}` : "Standalone Notes"}`}
+                  >
+                    <span className="text-2xl leading-none" aria-hidden="true">→</span>
+                    <span className="mt-1 text-lg font-semibold">View all notes</span>
+                    <span className="mt-1 text-sm text-muted transition-colors group-hover:text-ink">Open the complete collection</span>
+                  </Link>
                 </div>
               </section>
             ))}

@@ -74,12 +74,20 @@
 - Reveal button → shows explanation
 - Explanation: why correct + why others are wrong
 
+### Notebook Collections
+- Present each lesson as a horizontal shelf ordered by the most recently updated note.
+- Show no more than three equal-size preview cards, then an unboxed `View all notes` selection in the same horizontal sequence immediately after the final preview.
+- Place the saved-note count in small muted text beneath the lesson heading; do not repeat the count in the View All tile.
+- Clamp long preview content to preserve equal card heights and show personal remarks as a Yes/No status. Keep confirmed removal visible on the card; `View details` opens the complete content plus edit and removal actions in a focused dialog.
+- The complete lesson collection uses the same fixed-size cards in a responsive grid with collection-specific search and type filters.
+
 ### AI Tutor Panel
 - Header with selected item name
-- Language toggle: EN | 中文 | Both
-- Quick action button row (wraps on smaller widths)
+- Clear chat and Close actions
+- Contextual suggestion chips (wrap on smaller widths)
 - Scrollable chat area
-- Each response: light background bubble, structured content
+- Assistant responses use a sage left rule; learner messages use light background bubbles
+- Closing and reopening preserves the current lesson-visit conversation; clearing requires confirmation
 
 ## Avoid
 

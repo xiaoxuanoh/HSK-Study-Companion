@@ -34,40 +34,56 @@ Landing Page
                                             │
                                             └─> Right Panel: AI Tutor
                                                   ├─> Current selected item
-                                                  ├─> Language toggle (EN / 中文 / Both)
-                                                  ├─> Quick action buttons
-                                                  └─> Chat-style response area
+                                                  ├─> Contextual suggestion chips
+                                                  ├─> Chat-style response thread
+                                                  └─> Text input and Send action
 ```
 
 ## Vocabulary Popup Flow
 
 ```
 Passage Section (middle panel)
-  └─> Highlighted vocabulary word
-        └─> [Hover] → word darkens
-              └─> [Click] → small popup appears
+  └─> Sage-underlined vocabulary word (visible without hover)
+        └─> [Hover / focus] → subtle accent background
+              └─> [Click] → scroll-safe popup appears near the word
+                    ├─> Sticky action header (Explain More, Add to Notebook, Close)
                     ├─> Word + pinyin
                     ├─> Part of speech
                     ├─> Short meaning
                     ├─> Sample sentence
                     ├─> [Explain more] → loads full explanation in AI tutor panel
-                    └─> [Save] → saves word to Notebook
+                    └─> [Add to Notebook] → saves word once and shows its saved state
+```
+
+## Grammar Detail Flow
+
+```
+Grammar Notes Section
+  └─> Select a grammar card
+        └─> Scroll-safe detail popup
+              ├─> Sticky action header (Explain More, Add to Notebook, Close)
+              ├─> Meaning and structure
+              ├─> How it works, tone, and examples
+              ├─> [Explain More] → opens the AI tutor with grammar context
+              └─> [Add to Notebook] → saves once and shows its saved state
 ```
 
 ## AI Tutor Quick Action Flow
 
 ```
 AI Tutor Panel (right panel)
-  ├─> Quick action buttons:
+  ├─> Contextual suggestion chips:
   │     ├─> Explain simply
   │     ├─> Break down sentence
   │     ├─> Explain grammar
   │     ├─> Compare similar words
   │     ├─> Give examples
   │     ├─> Why is my answer wrong?
-  │     ├─> Make a mini quiz
-  │     └─> Save this
-  └─> Chat area shows mock response for selected item
+  │     └─> Make a mini quiz
+  ├─> Closing and reopening retains the conversation for the current lesson visit
+  ├─> [Clear chat] removes the current conversation after confirmation
+  ├─> Leaving or reloading the lesson starts a fresh conversation
+  └─> Typed questions receive mock responses for the selected context
 ```
 
 ## Notebook Save Flow
@@ -80,8 +96,10 @@ Any section
               └─> Dedicated Notebook page provides:
                     ├─> Search and type filters
                     ├─> Default grouping by source lesson
-                    ├─> Source-lesson links
-                    ├─> Editable personal remarks
+                    ├─> Three recent fixed-size previews in a horizontal row
+                    ├─> Unboxed [View all notes] selection after the final preview
+                    ├─> Lesson collection page with every saved note
+                    ├─> Detail popup for complete content and editable personal remarks
                     ├─> Standalone personal notes
                     └─> Removal with confirmation
 ```

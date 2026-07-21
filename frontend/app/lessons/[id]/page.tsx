@@ -89,6 +89,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [iconPos, setIconPos] = useState<{ x: number; y: number } | null>(null);
   const vocabTriggerRef = useRef<HTMLElement | null>(null);
   const grammarTriggerRef = useRef<HTMLElement | null>(null);
+  const aiButtonRef = useRef<HTMLButtonElement | null>(null);
+  const aiReturnFocusRef = useRef<HTMLElement | null>(null);
+  const aiOpenedFromButtonRef = useRef(false);
 
   const dragState = useRef({
     active: false,
@@ -100,23 +103,30 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   });
 
   useEffect(() => {
-    const onMouseMove = (e: MouseEvent) => {
+    const onPointerMove = (e: PointerEvent) => {
       if (!dragState.current.active) return;
       const dx = e.clientX - dragState.current.startX;
       const dy = e.clientY - dragState.current.startY;
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) dragState.current.moved = true;
-      setIconPos({ x: dragState.current.originX + dx, y: dragState.current.originY + dy });
+      setIconPos({
+        x: Math.max(8, Math.min(dragState.current.originX + dx, window.innerWidth - 56)),
+        y: Math.max(8, Math.min(dragState.current.originY + dy, window.innerHeight - 56)),
+      });
     };
-    const onMouseUp = () => {
+    const onPointerUp = () => {
       if (!dragState.current.active) return;
-      if (!dragState.current.moved) setAiOpen((prev) => !prev);
       dragState.current.active = false;
     };
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
+    const onPointerCancel = () => {
+      dragState.current.active = false;
+    };
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerCancel);
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerCancel);
     };
   }, []);
 
@@ -144,6 +154,15 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
   const handleAiClose = () => {
     setAiOpen(false);
+    window.requestAnimationFrame(() => {
+      const returnTarget = aiOpenedFromButtonRef.current ? aiButtonRef.current : aiReturnFocusRef.current;
+      returnTarget?.focus();
+      aiOpenedFromButtonRef.current = false;
+      aiReturnFocusRef.current = null;
+    });
+  };
+
+  const handleAiClear = () => {
     setMessages([]);
     setCurrentFocus("");
   };
@@ -176,7 +195,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     return { x, y: above ? rect.top : rect.bottom, above };
   };
 
-  if (!lesson) return <main className="p-6 text-ink">Loading lesson...</main>;
+  if (!lesson) return <main className="p-4 text-ink sm:p-6">Loading lesson...</main>;
 
   const notebookSource = {
     lessonId: lesson.id,
@@ -252,29 +271,32 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex h-[100dvh] min-w-0 flex-col">
       {/* Lesson navigation and identity */}
-      <header className="sticky top-0 z-40 shrink-0 border-b border-stone-200 bg-paper px-4 py-4 sm:px-6">
-        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3">
+      <header className="sticky top-0 z-40 shrink-0 border-b border-stone-200 bg-paper px-4 py-2.5 sm:px-6 sm:py-3">
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-between">
           <div className="min-w-0">
-          <p className="text-xs text-muted">Lesson {lesson.lesson.number}</p>
-            <h1 className="mt-1 truncate text-2xl font-semibold text-ink sm:text-3xl">
+            <p className="truncate text-xs text-muted">
+              Lesson {lesson.lesson.number}
+              <span aria-hidden="true" className="mx-1.5">·</span>
+              {lesson.lesson.titleEnglish}
+            </p>
+            <h1 className="mt-0.5 truncate text-xl font-semibold text-ink sm:text-2xl">
               {lesson.lesson.titleChinese}
             </h1>
-            <p className="mt-1 truncate text-sm text-muted">{lesson.lesson.titleEnglish}</p>
           </div>
 
-          <nav aria-label="Lesson navigation" className="flex shrink-0 flex-wrap items-center gap-2">
+          <nav aria-label="Lesson navigation" className="flex shrink-0 flex-col items-stretch gap-1.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
             <Link
               href="/dashboard"
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-300 bg-card px-4 text-sm font-medium text-ink transition-colors hover:bg-card-hover"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-stone-300 bg-card px-2.5 text-xs font-medium text-ink transition-colors hover:bg-card-hover sm:min-h-11 sm:gap-2 sm:px-4 sm:text-sm"
             >
               <span aria-hidden="true">←</span>
               <span>Dashboard</span>
             </Link>
             <Link
               href="/notebook"
-              className="inline-flex min-h-11 items-center rounded-lg border border-stone-300 bg-card px-4 text-sm font-medium text-ink transition-colors hover:bg-card-hover"
+              className="inline-flex min-h-10 items-center rounded-lg border border-stone-300 bg-card px-2.5 text-xs font-medium text-ink transition-colors hover:bg-card-hover sm:min-h-11 sm:px-4 sm:text-sm"
             >
               My Notebook
             </Link>
@@ -283,20 +305,22 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
       </header>
 
       {/* Body: nav + content + optional AI panel */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left nav — scrolls independently */}
-        <aside className="w-64 shrink-0 overflow-y-auto bg-paper p-3">
-          <div className="rounded-xl border border-stone-200 bg-card p-3 shadow-sm">
-            <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-muted">Sections</p>
-            <div className="space-y-0.5">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:flex-row">
+        {/* Horizontal section tabs on smaller screens; left rail on desktop. */}
+        <aside className="w-full shrink-0 overflow-x-auto border-b border-stone-200 bg-paper p-2 lg:w-64 lg:overflow-y-auto lg:border-b-0 lg:p-3">
+          <div className="lg:rounded-xl lg:border lg:border-stone-200 lg:bg-card lg:p-3 lg:shadow-sm">
+            <p className="sr-only lg:not-sr-only lg:mb-2 lg:px-2 lg:text-xs lg:font-semibold lg:uppercase lg:tracking-wide lg:text-muted">Sections</p>
+            <div className="flex min-w-max gap-1 bg-card lg:block lg:min-w-0 lg:space-y-0.5 lg:bg-transparent">
               {sectionOrder.map((key) => (
                 <button
                   key={key}
+                  type="button"
+                  aria-current={section === key ? "page" : undefined}
                   onClick={() => handleSectionChange(key)}
-                  className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-100 ${
+                  className={`min-h-11 whitespace-nowrap rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-100 lg:w-full ${
                     section === key
-                      ? "bg-white font-semibold text-ink shadow-sm"
-                      : "text-muted hover:text-ink hover:bg-white/60"
+                      ? "border-b-2 border-accent font-semibold text-ink lg:border-b-0 lg:bg-white lg:shadow-sm"
+                      : "text-muted hover:text-ink lg:hover:bg-white/60"
                   }`}
                 >
                   {lesson.sections[key].title}
@@ -307,7 +331,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         </aside>
 
         {/* Content — scrolls independently */}
-        <main className="relative flex-1 overflow-y-auto p-8">
+        <main className="relative min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <h2 className="text-xl font-semibold text-ink">{lesson.sections[section].title}</h2>
 
           {section === "warmup" && (
@@ -405,10 +429,11 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           {section === "wordDistinction" && (
             <div className="mt-4 space-y-5">
               {(lesson.sections.wordDistinction.groups as DistinctionGroup[]).map((group) => (
-                <article key={group.id} className="rounded-lg border border-stone-200 bg-card p-4">
+                <article key={group.id} className="min-w-0 rounded-lg border border-stone-200 bg-card p-4">
                   <h3 className="text-lg font-semibold text-ink">{group.words[0]} vs {group.words[1]}</h3>
                   <p className="mt-2 text-sm text-muted">{group.sharedMeaning}</p>
-                  <table className="mt-3 w-full border-collapse text-sm">
+                  <div className="mt-3 overflow-x-auto rounded-lg">
+                  <table className="w-full min-w-[34rem] border-collapse text-sm">
                     <thead>
                       <tr className="bg-paper">
                         <th className="border border-stone-200 p-2 text-left text-muted font-medium">Dimension</th>
@@ -426,6 +451,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 </article>
               ))}
             </div>
@@ -496,10 +522,11 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               onClose={() => closeVocabPopup()}
               onExplain={() => {
                 const word = vocabItem.word;
+                aiOpenedFromButtonRef.current = false;
+                aiReturnFocusRef.current = vocabTriggerRef.current;
                 setCurrentFocus(word);
                 setAiOpen(true);
-                setPopupWord(null);
-                setPopupPos(null);
+                closeVocabPopup(false);
                 askAI(lesson!.id, `Explain ${word} in this lesson context`).then((res) => {
                   setMessages((prev) => [...prev, { role: "assistant", content: res }]);
                 });
@@ -524,6 +551,8 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               onClose={() => closeGrammarPopup()}
               onExplain={() => {
                 const grammarPoint = selectedGrammar.grammarPoint;
+                aiOpenedFromButtonRef.current = false;
+                aiReturnFocusRef.current = grammarTriggerRef.current;
                 setCurrentFocus(grammarPoint);
                 setAiOpen(true);
                 closeGrammarPopup(false);
@@ -544,13 +573,14 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           ) : null}
         </main>
 
-        {/* AI Tutor panel — inline, pushes content when open */}
+        {/* Full-screen study surface on smaller screens; inline panel on wide desktops. */}
         {aiOpen && (
-          <div className="w-[340px] shrink-0 flex flex-col border-l border-stone-200 bg-card overflow-hidden">
+          <div className="fixed inset-0 z-[60] flex min-w-0 flex-col overflow-hidden bg-card xl:static xl:z-auto xl:w-[340px] xl:shrink-0 xl:border-l xl:border-stone-200">
             <AITutorPanel
               currentFocus={currentFocus}
               messages={messages}
               onAsk={onAsk}
+              onClear={handleAiClear}
               onClose={handleAiClose}
             />
           </div>
@@ -559,12 +589,18 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
       {/* Draggable AI icon — hidden when panel is open */}
       {!aiOpen && (
-        <div
-          className="fixed z-50 flex h-12 w-12 cursor-grab items-center justify-center rounded-full shadow-lg select-none text-white text-xl transition-colors duration-150"
+        <button
+          ref={aiButtonRef}
+          type="button"
+          aria-label="Open AI tutor"
+          aria-haspopup="dialog"
+          aria-expanded={aiOpen}
+          aria-controls="ai-tutor-panel"
+          className="fixed z-50 flex h-12 w-12 touch-none cursor-grab select-none items-center justify-center rounded-full text-xl text-white shadow-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
           style={iconPos
             ? { left: iconPos.x, top: iconPos.y, backgroundColor: "#7A9E7E" }
             : { right: 24, bottom: 24, backgroundColor: "#7A9E7E" }}
-          onMouseDown={(e) => {
+          onPointerDown={(e) => {
             e.preventDefault();
             const rect = e.currentTarget.getBoundingClientRect();
             dragState.current = {
@@ -576,9 +612,16 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               moved: false,
             };
           }}
+          onClick={(event) => {
+            if (event.detail === 0 || !dragState.current.moved) {
+              aiOpenedFromButtonRef.current = true;
+              aiReturnFocusRef.current = null;
+              setAiOpen(true);
+            }
+          }}
         >
           ✦
-        </div>
+        </button>
       )}
     </div>
   );

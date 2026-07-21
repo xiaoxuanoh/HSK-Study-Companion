@@ -2,7 +2,7 @@
 
 A self-study website for HSK learners that provides teacher-style explanations, near-synonym reasoning, grammar breakdowns, and AI-assisted study support.
 
-**Current Status:** Polished interactive prototype; Next.js security upgrade completed and verified
+**Current Status:** Polished interactive prototype with learner-approved responsive/accessibility, AI-chat, and Notebook shelf refinements on the active feature branch
 **Current Focus:** HSK 6 Lesson 1 — 孩子给我们的启示 (An epiphany from the children)
 
 ---
@@ -33,9 +33,9 @@ Textbook and workbook materials for HSK are available, but proper explanations, 
 - Grammar notes in handwritten-note style
 - Word distinction / near-synonym comparison tables
 - Exercise section with answer reasoning
-- Writing section with prompt guidance and mock correction
-- AI tutor panel with mock context-aware responses
-- Notebook/review section (mock local state)
+- Writing workspace with prompt guidance, an autosaved local draft, character counter, confirmed reset controls, and retained supportive feedback history
+- Responsive AI Tutor with mock context-aware responses, current-visit chat retention, and confirmed clearing
+- Dedicated course-wide Notebook with versioned browser persistence, horizontal three-note lesson previews, full lesson collections, fixed-size detail cards, search, filters, remarks, personal notes, and mistake review
 
 ## Future Plans
 
@@ -57,7 +57,9 @@ Textbook and workbook materials for HSK are available, but proper explanations, 
 
 ## Branch Status
 
-- `main` contains the tested framework upgrade and remains the active website branch.
+- `main` contains the tested framework upgrade.
+- `agent/add-lesson-navigation` contains all eight lesson-refinement points and subsequent reviewed navigation/card/popup polish through `5e507ff`.
+- Its working tree contains the reviewed responsive/accessibility, compact mobile navigation, and AI chat-retention checkpoint; these changes are validated but not yet committed.
 - `feature/supabase-integration` contains a mock-by-default Supabase foundation and is intentionally paused.
 - No live Supabase project has been linked or modified, and existing website routes do not depend on Supabase.
 

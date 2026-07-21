@@ -66,9 +66,9 @@ Textbook and workbook materials for HSK exist, but proper explanations, teacher-
 A full-stack web app that:
 1. Presents HSK lessons in a **three-panel study layout** (nav, content, AI tutor)
 2. Provides **clickable vocabulary popups** with teacher-style explanations
-3. Covers all lesson sections: **Warm-up, Passage, Vocabulary, Grammar Notes, Word Distinction, Exercises, Writing, Expansion, Notebook**
+3. Covers all lesson sections: **Warm-up, Passage, Vocabulary, Grammar Notes, Word Distinction, Exercises, Writing, Expansion**
 4. Includes a **mock AI tutor panel** (upgradeable to a real backend AI call)
-5. Includes a **notebook section** for saving vocabulary and grammar (currently in-memory)
+5. Includes a dedicated **course-wide Notebook workspace** with versioned browser persistence, horizontal lesson previews, complete lesson collection pages, fixed-size cards with detail dialogs, search, filters, editable remarks, personal notes, and mistake review
 6. Uses **FastAPI backend** serving mock JSON data — structured to swap in Supabase + real AI later
 
 ---
@@ -116,6 +116,8 @@ Three-panel layout: LeftNav | Content Sections | AITutorPanel
 Click vocabulary word → VocabPopup → optional add to notebook
       ↓
 Ask AI tutor → mock response (future: FastAPI → AI API)
+      ↓
+Open My Notebook (/notebook) → browse three-note lesson shelves → View all (/notebook/[lessonId]) → search/filter/view/edit/remove saved items
 ```
 
 ## File Organization
@@ -227,11 +229,13 @@ Responses are effectively classified by source:
 - Keep `services/` thin and focused on data loading — no business logic in route handlers
 - Type all API responses with Pydantic (backend) and TypeScript interfaces (frontend)
 - Never hardcode lesson content in components — always fetch from backend
-- Notebook state will move to Supabase Postgres; keep notebook logic isolated so it can be extracted
+- `frontend/lib/notebook.ts` owns the replaceable Notebook repository interface and current versioned browser-storage implementation; later account persistence should replace this layer without rewriting Notebook UI
 
 ## Current Framework and Branch Baseline
 
 - `main` and `origin/main` contain the verified Next.js 16 upgrade at `e41f637`.
+- `agent/add-lesson-navigation` is the active refinement branch. All eight lesson-refinement points and the reviewed Dashboard/sidebar and lesson-card/popup polish are pushed through `5e507ff`.
+- The latest `agent/add-lesson-navigation` checkpoint includes the learner-reviewed responsive/accessibility pass, compact mobile lesson header, unified mobile section strip, current-visit AI chat retention, and Notebook shelf/collection refinement.
 - ESLint uses `frontend/eslint.config.mjs`; Next.js 16 no longer provides `next lint`.
 - Dynamic route parameters are promises in Next.js 16; the lesson page unwraps them with React `use()`.
 - Turbopack root is configured at the repository level so frontend fallback code can import `data/hsk6/lesson-01.json`.
@@ -269,7 +273,7 @@ Responses are effectively classified by source:
 ✅ Vocabulary words in passage are clickable and show popup with explanation
 ✅ Grammar notes, word distinction tables, exercises, and writing sections render
 ✅ AI tutor panel responds to questions with mock explanations
-✅ Notebook section shows saved items; add/remove works in local state
+✅ Dedicated Notebook workspace persists browser-local items and supports search, filters, lesson grouping, editable remarks, standalone notes, mistake review, and confirmed removal
 ✅ App remains usable if backend is offline (frontend mock fallback)
 ✅ Static styling uses Tailwind; inline styles are limited to runtime positioning
 
@@ -309,9 +313,9 @@ Responses are effectively classified by source:
    - Expand beyond HSK 6 Lesson 1
    - Add lesson selection and progress tracking
 
-7. **Notebook Persistence**
-   - Current notebook resets on server restart (in-memory dict)
-   - Move to Supabase Postgres; hydrate on load
+7. **Account-backed Notebook Persistence**
+   - Current Notebook persists in a versioned browser-storage envelope through a replaceable repository interface
+   - Later replace the browser repository with Supabase Postgres and account hydration without rewriting Notebook UI
 
 ---
 
@@ -334,7 +338,7 @@ These are explicitly out of scope until the prototype phase is complete:
 - **Frontend-first prototype** (Next.js + React SPA with App Router)
 - **Mock data only now** — `data/hsk6/lesson-01.json` is the only data source
 - **No real AI yet** — `ai_service.py` returns mock strings
-- **No persistent storage yet** — notebook and progress reset on restart
+- **Browser-local persistence only** — Notebook data persists on the current browser; accounts, cross-device sync, and persistent progress are not implemented
 - **No auth yet** — all routes are open
 - **No deployment config yet** — local dev only
 - **Explanation quality is the product** — never ship vocabulary popups or AI responses without proper teacher-style explanations

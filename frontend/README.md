@@ -36,3 +36,5 @@ Open `http://localhost:3000`. If the FastAPI backend is unavailable, the fronten
 - `/`
 - `/dashboard`
 - `/lessons/hsk6-lesson-01`
+- `/notebook`
+- `/notebook/hsk6-lesson-01`

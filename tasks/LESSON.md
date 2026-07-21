@@ -58,6 +58,22 @@ Future lessons should be added by creating new lesson JSON files in data/hsk{lev
 - Only run `npm run build` after killing the dev server
 - Recovery when it happens: `pkill -f "next dev" && rm -rf .next && npm run dev`
 
+### Isolated build validation while development continues
+
+If the running development server should not be stopped, do not run `next build` against the same `frontend/.next` directory. Validate from an isolated temporary checkout or copy instead.
+
+- Include the repository-level `data/` directory because `frontend/lib/mockData.ts` imports `data/hsk6/lesson-01.json`.
+- Reuse the installed `frontend/node_modules` through a temporary symlink when appropriate.
+- Run lint and the webpack production build in the temporary frontend directory.
+- A temporary build that omits `data/` will fail with `Can't resolve '../../data/hsk6/lesson-01.json'`; that is a validation-copy problem, not an application regression.
+
+## Notebook item terminology
+
+- Existing selectable words in the Passage are curated vocabulary entries, including multi-character Chinese words.
+- Reserve `phrase` for reusable collocations, chunks, or selected excerpts rather than treating every multi-character word as a phrase.
+- The Notebook data model may keep phrase support future-ready even when no current UI creates phrase records.
+- A future text-selection menu may offer “Add to Notebook,” “Ask AI Tutor,” and “Explain selection”; it should not automatically claim that every arbitrary selection is linguistically a phrase.
+
 ---
 
 ## Next.js 16 Upgrade Patterns
@@ -81,6 +97,14 @@ The vocab popup uses `position: fixed` with coordinates from `getBoundingClientR
 - Do NOT use `position: absolute` for this — the content panel is a scrollable container and absolute offsets would be wrong
 - Do NOT try to reposition based on `aiOpen` at click time — instead, close the popup when "Explain More" is clicked (Option A, confirmed by user)
 
+## Lesson Card and Detail Popup Alignment
+
+- Vocabulary and grammar summary cards must use top-aligned flex columns. Do not vertically center the card body: definitions with different line counts will otherwise move the word/title vertically.
+- Give term/title, pronunciation or badge, and definition their own layout regions so wrapping in one region does not shift another.
+- Long vocabulary and grammar details use scroll-safe popups with a sticky action header. Keep `Explain More`, `Add to Notebook` / saved state, and `Close` available without requiring the user to scroll to the bottom.
+- Keep popup action controls compact and allow responsive wrapping for narrow viewports or long titles. A separator below the sticky actions is unnecessary unless the content hierarchy becomes unclear.
+- Both vocabulary and grammar details support `Explain More`; grammar should hand the selected grammar point and its explanation context to the AI Tutor.
+
 ## AI Tutor Panel — Chatbot State Shape
 
 The AI tutor panel uses a messages array, not a single response string:
@@ -91,8 +115,11 @@ currentFocus: string  // the word or topic being studied
 
 - `onExplain` (word clicked → Explain More): appends assistant message only — no user bubble
 - `onAsk` (suggestion chip or typed input): appends user message then assistant response
-- `handleAiClose`: clears both `messages` and `currentFocus` — panel resets on close
+- `handleAiClose`: hides the panel without deleting the current lesson-visit conversation
+- `handleAiClear`: clears both `messages` and `currentFocus` after user confirmation
+- Leaving or reloading the lesson starts a fresh conversation; persistent cross-visit chat history is deferred
 - Panel stays open + new word explained: messages accumulate, `currentFocus` updates to new word
+- Below the `xl` breakpoint the Tutor is a modal dialog with trapped focus; at `xl` and above it is an inline complementary panel that does not trap keyboard users
 
 ---
 
@@ -110,7 +137,11 @@ currentFocus: string  // the word or topic being studied
   - Grammar notes
   - Word distinction tables
   - Exercises reasoning
-  - Writing/application guidance
-  - Expansion
-  - Notebook (mock local state)
+  - Writing/Application workspace with lesson guidance, a locally autosaved editor, character count, confirmed clearing controls, supportive feedback, and retained feedback history
+  - Expansion reading card with comfortable Chinese typography and a visually distinct English translation
+- My Notebook is a dedicated course-wide `/notebook` workspace backed by a versioned browser-storage repository.
+- It supports vocabulary, grammar, exercise mistakes, future phrases, and personal notes with search, filtering, source grouping, editable remarks, and confirmed removal.
+- Keep each lesson overview compact: order by most recently updated, show at most three equal-size note previews in a horizontal row, and place an unboxed `View all notes` selection immediately after the final preview regardless of the saved-note count.
+- Keep full remarks out of the fixed-height preview card and represent their presence as Yes/No. Keep confirmed removal visible on the card. `View details` opens the complete note and its edit/remove actions in an accessible popup; `/notebook/[lessonId]` provides the complete searchable collection.
+- Writing/Application drafts and non-scored feedback histories are retained per lesson through a separate versioned browser-storage repository.
 - AI tutor panel is mock-only in this phase.
