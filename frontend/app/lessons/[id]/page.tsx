@@ -285,7 +285,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
       {/* Body: nav + content + optional AI panel */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left nav — scrolls independently */}
-        <aside className="w-[220px] shrink-0 overflow-y-auto bg-paper p-3">
+        <aside className="w-64 shrink-0 overflow-y-auto bg-paper p-3">
           <div className="rounded-xl border border-stone-200 bg-card p-3 shadow-sm">
             <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-muted">Sections</p>
             <div className="space-y-0.5">
