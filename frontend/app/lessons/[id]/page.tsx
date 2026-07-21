@@ -347,22 +347,22 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     setPopupWord(item.word);
                     setPopupPos(getPopupPosition(rect));
                   }}
-                  className={`min-h-32 rounded-xl border p-4 text-left shadow-sm transition duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-paper ${
+                  className={`flex min-h-44 flex-col items-stretch justify-start rounded-xl border p-5 text-left shadow-sm transition duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-paper ${
                     popupWord === item.word
                       ? "border-accent bg-white shadow-md"
                       : "border-stone-200 bg-card"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-2xl font-semibold leading-none text-ink">{item.word}</h3>
+                    <div className="min-w-0">
+                      <h3 className="text-xl font-semibold leading-snug text-ink">{item.word}</h3>
                       <p className="mt-2 text-sm text-muted">{item.pinyin}</p>
                     </div>
-                    <span className="rounded-full bg-paper px-2 py-1 text-[11px] font-medium text-muted">
+                    <span className="shrink-0 rounded-full bg-paper px-2 py-1 text-[11px] font-medium text-muted">
                       {item.partOfSpeech}
                     </span>
                   </div>
-                  <p className="mt-4 line-clamp-2 text-sm leading-5 text-ink">{item.meaning}</p>
+                  <p className="mt-5 line-clamp-3 text-sm leading-6 text-ink">{item.meaning}</p>
                 </button>
               ))}
             </div>
@@ -384,7 +384,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     setSelectedGrammarId(item.id);
                     setGrammarPopupPos(getPopupPosition(rect, 576));
                   }}
-                  className={`min-h-44 rounded-xl border p-5 text-left shadow-sm transition duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-paper ${
+                  className={`flex min-h-44 flex-col items-stretch justify-start rounded-xl border p-5 text-left shadow-sm transition duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-paper ${
                     selectedGrammarId === item.id
                       ? "border-accent bg-white shadow-md"
                       : "border-stone-200 bg-card"
@@ -522,6 +522,15 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               item={selectedGrammar}
               position={grammarPopupPos}
               onClose={() => closeGrammarPopup()}
+              onExplain={() => {
+                const grammarPoint = selectedGrammar.grammarPoint;
+                setCurrentFocus(grammarPoint);
+                setAiOpen(true);
+                closeGrammarPopup(false);
+                askAI(lesson!.id, `Explain the grammar pattern ${grammarPoint} in this lesson context and show how to use it naturally.`).then((res) => {
+                  setMessages((prev) => [...prev, { role: "assistant", content: res }]);
+                });
+              }}
               isInNotebook={grammarIsInNotebook}
               onAddToNotebook={() => addNotebookItem({
                 type: "grammar",
