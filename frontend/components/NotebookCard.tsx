@@ -101,6 +101,7 @@ function NotebookDetailsModal({
                 {item.title}
               </h2>
               {item.pinyin ? <p className="mt-1 text-sm text-muted">{item.pinyin}</p> : null}
+              {item.sourceSection ? <p className="mt-1 text-xs text-muted">From {item.sourceSection}</p> : null}
             </div>
             <button
               ref={closeButtonRef}
@@ -119,6 +120,12 @@ function NotebookDetailsModal({
             </time>
 
             {item.summary ? <p className="mt-4 text-base leading-7 text-ink">{item.summary}</p> : null}
+            {item.context && item.context !== item.title ? (
+              <div className="mt-4 rounded-xl bg-paper p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted">Lesson context</p>
+                <p className="mt-1 text-sm leading-6 text-ink">{item.context}</p>
+              </div>
+            ) : null}
             {item.structure ? (
               <div className="mt-4 rounded-xl bg-paper p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted">Structure</p>
@@ -277,6 +284,7 @@ export default function NotebookCard({
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">{notebookTypeLabels[item.type]}</p>
             <h3 className="mt-1 line-clamp-2 break-words text-lg font-semibold text-ink">{item.title}</h3>
             {item.pinyin ? <p className="mt-0.5 line-clamp-1 text-sm text-muted">{item.pinyin}</p> : null}
+            {item.sourceSection ? <p className="mt-0.5 line-clamp-1 text-xs text-muted">From {item.sourceSection}</p> : null}
           </div>
           <time className="shrink-0 text-xs text-muted" dateTime={item.createdAt}>
             {new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(new Date(item.createdAt))}
@@ -285,6 +293,9 @@ export default function NotebookCard({
 
         <div className="min-h-0 flex-1 overflow-hidden">
           {item.summary ? <p className="mt-3 line-clamp-3 text-sm leading-6 text-ink">{item.summary}</p> : null}
+          {!item.summary && item.type === "phrase" && item.context && item.context !== item.title ? (
+            <p className="mt-3 line-clamp-3 text-sm leading-6 text-ink">{item.context}</p>
+          ) : null}
           {item.structure ? (
             <div className="mt-3 rounded-lg bg-paper p-3 text-sm">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted">Structure</p>

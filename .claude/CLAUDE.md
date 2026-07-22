@@ -69,7 +69,8 @@ A full-stack web app that:
 3. Covers all lesson sections: **Warm-up, Passage, Vocabulary, Grammar Notes, Word Distinction, Exercises, Writing, Expansion**
 4. Includes a **mock AI tutor panel** (upgradeable to a real backend AI call)
 5. Includes a dedicated **course-wide Notebook workspace** with versioned browser persistence, horizontal lesson previews, complete lesson collection pages, fixed-size cards with detail dialogs, search, filters, editable remarks, personal notes, and mistake review
-6. Uses **FastAPI backend** serving mock JSON data — structured to swap in Supabase + real AI later
+6. Lets learners select lesson text on any device to save a contextual Phrase or request an AI Tutor explanation
+7. Uses **FastAPI backend** serving mock JSON data — structured to swap in Supabase + real AI later
 
 ---
 
@@ -114,6 +115,8 @@ Lesson Overview Modal → Lesson Study Page (/lessons/[id])
 Three-panel layout: LeftNav | Content Sections | AITutorPanel
       ↓
 Click vocabulary word → VocabPopup → optional add to notebook
+      ↓
+Select lesson text → contextual actions → save Phrase with context or Explain More
       ↓
 Ask AI tutor → mock response (future: FastAPI → AI API)
       ↓
@@ -235,7 +238,7 @@ Responses are effectively classified by source:
 
 - `main` and `origin/main` contain the verified Next.js 16 upgrade at `e41f637`.
 - `agent/add-lesson-navigation` is the active refinement branch. All eight lesson-refinement points and the reviewed Dashboard/sidebar and lesson-card/popup polish are pushed through `5e507ff`.
-- The latest `agent/add-lesson-navigation` checkpoint includes the learner-reviewed responsive/accessibility pass, compact mobile lesson header, unified mobile section strip, current-visit AI chat retention, and Notebook shelf/collection refinement.
+- The latest `agent/add-lesson-navigation` checkpoint includes the learner-approved responsive/accessibility, AI-chat, Notebook shelf/collection, and cross-device selected-text workflows.
 - ESLint uses `frontend/eslint.config.mjs`; Next.js 16 no longer provides `next lint`.
 - Dynamic route parameters are promises in Next.js 16; the lesson page unwraps them with React `use()`.
 - Turbopack root is configured at the repository level so frontend fallback code can import `data/hsk6/lesson-01.json`.

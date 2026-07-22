@@ -2,7 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 
-export const NOTEBOOK_STORAGE_VERSION = 5;
+export const NOTEBOOK_STORAGE_VERSION = 6;
 export const NOTEBOOK_STORAGE_KEY = "hsk-study-companion:notebook";
 
 export type NotebookItemType = "vocabulary" | "phrase" | "grammar" | "mistake" | "personal-note";
@@ -29,6 +29,8 @@ export type NotebookItem = {
   title: string;
   pinyin?: string;
   summary?: string;
+  context?: string;
+  sourceSection?: string;
   structure?: string;
   myAnswer?: string;
   correctAnswer?: string;
@@ -184,6 +186,7 @@ const migrateStoredItems = (envelope: StoredNotebookEnvelope): NotebookItem[] | 
     && envelope.version !== 2
     && envelope.version !== 3
     && envelope.version !== 4
+    && envelope.version !== 5
     && envelope.version !== NOTEBOOK_STORAGE_VERSION
   ) {
     return null;
@@ -239,7 +242,7 @@ class BrowserNotebookRepository implements NotebookRepository {
 
     try {
       const envelope = JSON.parse(raw) as StoredNotebookEnvelope;
-      if (envelope.version === 1 || envelope.version === 2 || envelope.version === 3 || envelope.version === 4) {
+      if (envelope.version === 1 || envelope.version === 2 || envelope.version === 3 || envelope.version === 4 || envelope.version === 5) {
         const migratedItems = migrateStoredItems(envelope);
         if (migratedItems) this.write(migratedItems);
       }

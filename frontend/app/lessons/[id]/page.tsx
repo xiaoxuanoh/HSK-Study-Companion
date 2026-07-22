@@ -5,6 +5,7 @@ import { use, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 
 import AITutorPanel from "@/components/AITutorPanel";
 import ExerciseCard, { type ExerciseItem } from "@/components/ExerciseCard";
 import GrammarPopup from "@/components/GrammarPopup";
+import TextSelectionActions, { type StudyTextSelection } from "@/components/TextSelectionActions";
 import VocabPopup from "@/components/VocabPopup";
 import WritingWorkspace from "@/components/WritingWorkspace";
 import { askAI, getLesson } from "@/lib/api";
@@ -90,6 +91,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const vocabTriggerRef = useRef<HTMLElement | null>(null);
   const grammarTriggerRef = useRef<HTMLElement | null>(null);
   const aiButtonRef = useRef<HTMLButtonElement | null>(null);
+  const selectionScopeRef = useRef<HTMLDivElement | null>(null);
   const aiReturnFocusRef = useRef<HTMLElement | null>(null);
   const aiOpenedFromButtonRef = useRef(false);
 
@@ -152,6 +154,22 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setMessages((prev) => [...prev, { role: "assistant", content: res }]);
   };
 
+  const requestTutorExplanation = async ({
+    focus,
+    learnerMessage,
+    query,
+  }: {
+    focus: string;
+    learnerMessage: string;
+    query: string;
+  }) => {
+    if (!lesson) return;
+    setCurrentFocus(focus);
+    setMessages((prev) => [...prev, { role: "user", content: learnerMessage }]);
+    const res = await askAI(lesson.id, query);
+    setMessages((prev) => [...prev, { role: "assistant", content: res }]);
+  };
+
   const handleAiClose = () => {
     setAiOpen(false);
     window.requestAnimationFrame(() => {
@@ -180,6 +198,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   };
 
   const handleSectionChange = (nextSection: SectionKey) => {
+    window.getSelection()?.removeAllRanges();
     window.localStorage.setItem(lessonSectionStorageKey(lessonId), nextSection);
     window.dispatchEvent(new Event(lessonSectionChangeEvent));
     setPopupWord(null);
@@ -220,6 +239,11 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const grammarIsInNotebook = selectedGrammar
     ? notebook.some((item) => item.dedupeKey === grammarDedupeKey)
     : false;
+  const phraseDedupeKey = (selection: StudyTextSelection) => makeNotebookDedupeKey(
+    "phrase",
+    lesson.id,
+    `${selection.sectionKey}:${selection.text}`
+  );
 
   const renderPassage = () => {
     const highlights = lesson.sections.passage.vocabularyHighlights as Record<string, string>;
@@ -334,7 +358,18 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         <main className="relative min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <h2 className="text-xl font-semibold text-ink">{lesson.sections[section].title}</h2>
 
-          {section === "warmup" && (
+          <div
+            ref={selectionScopeRef}
+            tabIndex={-1}
+            className="focus:outline-none"
+            onClickCapture={(event) => {
+              if (window.getSelection()?.toString().trim()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+            }}
+          >
+            {section === "warmup" && (
             <ol className="mt-4 overflow-hidden rounded-xl border border-stone-200 bg-card shadow-sm">
               {(lesson.sections.warmup.prompts as WarmupPrompt[]).map((p, index) => (
                 <li key={p.id} className="flex items-start gap-3 border-b border-stone-200 p-4 last:border-b-0 sm:gap-4 sm:p-5">
@@ -353,9 +388,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             </ol>
           )}
 
-          {section === "passage" && renderPassage()}
+            {section === "passage" && renderPassage()}
 
-          {section === "vocabulary" && (
+            {section === "vocabulary" && (
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {(lesson.sections.vocabulary.items as VocabItem[]).map((item) => (
                 <button
@@ -392,7 +427,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             </div>
           )}
 
-          {section === "grammar" && (
+            {section === "grammar" && (
             <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
               {grammarItems.map((item) => (
                 <button
@@ -426,7 +461,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             </div>
           )}
 
-          {section === "wordDistinction" && (
+            {section === "wordDistinction" && (
             <div className="mt-4 space-y-5">
               {(lesson.sections.wordDistinction.groups as DistinctionGroup[]).map((group) => (
                 <article key={group.id} className="min-w-0 rounded-lg border border-stone-200 bg-card p-4">
@@ -457,7 +492,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             </div>
           )}
 
-          {section === "exercises" && (
+            {section === "exercises" && (
             <div className="mt-4 space-y-4">
               {(lesson.sections.exercises.items as ExerciseItem[]).map((item) => {
                 const mistakeDedupeKey = makeNotebookDedupeKey("mistake", lesson.id, item.id);
@@ -485,7 +520,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             </div>
           )}
 
-          {section === "writing" && (
+            {section === "writing" && (
             <WritingWorkspace
               key={lesson.id}
               lessonId={lesson.id}
@@ -497,7 +532,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             />
           )}
 
-          {section === "expansion" && (
+            {section === "expansion" && (
             <article className="mt-4 max-w-4xl overflow-hidden rounded-xl border border-stone-200 bg-card shadow-sm">
               <header className="border-b border-stone-200 bg-paper/60 px-5 py-4 sm:px-7">
                 <h3 className="font-semibold text-ink">{lesson.sections.expansion.reading.title}</h3>
@@ -511,7 +546,41 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 </p>
               </div>
             </article>
-          )}
+            )}
+          </div>
+
+          <TextSelectionActions
+            key={section}
+            scopeRef={selectionScopeRef}
+            sectionKey={section}
+            sectionTitle={lesson.sections[section].title}
+            isSaved={(selection) => notebook.some((item) => item.dedupeKey === phraseDedupeKey(selection))}
+            onAddToNotebook={(selection) => addNotebookItem({
+              type: "phrase",
+              title: selection.text,
+              context: selection.context,
+              sourceSection: selection.sectionTitle,
+              source: notebookSource,
+              dedupeKey: phraseDedupeKey(selection),
+            })}
+            onExplainMore={(selection) => {
+              aiOpenedFromButtonRef.current = false;
+              aiReturnFocusRef.current = selectionScopeRef.current;
+              setAiOpen(true);
+              setPopupWord(null);
+              setPopupPos(null);
+              setSelectedGrammarId(null);
+              setGrammarPopupPos(null);
+              const contextSuffix = selection.context !== selection.text
+                ? ` The surrounding lesson context is: ${selection.context}`
+                : "";
+              void requestTutorExplanation({
+                focus: selection.text,
+                learnerMessage: `Explain “${selection.text}”`,
+                query: `Explain the selected text “${selection.text}” from the ${selection.sectionTitle} section in this lesson.${contextSuffix}`,
+              });
+            }}
+          />
 
           {vocabItem && popupPos ? (
             <VocabPopup
@@ -524,11 +593,12 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 const word = vocabItem.word;
                 aiOpenedFromButtonRef.current = false;
                 aiReturnFocusRef.current = vocabTriggerRef.current;
-                setCurrentFocus(word);
                 setAiOpen(true);
                 closeVocabPopup(false);
-                askAI(lesson!.id, `Explain ${word} in this lesson context`).then((res) => {
-                  setMessages((prev) => [...prev, { role: "assistant", content: res }]);
+                void requestTutorExplanation({
+                  focus: word,
+                  learnerMessage: `Explain ${word}`,
+                  query: `Explain ${word} in this lesson context`,
                 });
               }}
               onAddToNotebook={() => {
@@ -553,11 +623,12 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 const grammarPoint = selectedGrammar.grammarPoint;
                 aiOpenedFromButtonRef.current = false;
                 aiReturnFocusRef.current = grammarTriggerRef.current;
-                setCurrentFocus(grammarPoint);
                 setAiOpen(true);
                 closeGrammarPopup(false);
-                askAI(lesson!.id, `Explain the grammar pattern ${grammarPoint} in this lesson context and show how to use it naturally.`).then((res) => {
-                  setMessages((prev) => [...prev, { role: "assistant", content: res }]);
+                void requestTutorExplanation({
+                  focus: grammarPoint,
+                  learnerMessage: `Explain the grammar pattern ${grammarPoint}`,
+                  query: `Explain the grammar pattern ${grammarPoint} in this lesson context and show how to use it naturally.`,
                 });
               }}
               isInNotebook={grammarIsInNotebook}

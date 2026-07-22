@@ -97,8 +97,8 @@ export default function AITutorPanel({ currentFocus, messages, onAsk, onClear, o
       <div className="flex items-start justify-between border-b border-stone-200 px-4 py-3 shrink-0">
         <div>
           <p className="text-xs text-muted">AI Tutor</p>
-          <h3 id="ai-tutor-title" className="text-xl font-semibold text-ink">
-            {currentFocus || "Study Assistant"}
+          <h3 id="ai-tutor-title" className="line-clamp-2 break-words text-xl font-semibold text-ink">
+            Study Assistant
           </h3>
         </div>
         <div className="flex shrink-0 items-center gap-1">
@@ -146,12 +146,12 @@ export default function AITutorPanel({ currentFocus, messages, onAsk, onClear, o
 
       {/* Suggestion chips — only after first message */}
       {messages.length > 0 && (
-        <div className="shrink-0 px-4 pb-2 flex flex-wrap gap-2">
+        <div className="flex shrink-0 flex-wrap gap-1.5 px-3 pb-1.5 sm:px-4">
           {suggestions.map((s) => (
             <button
               key={s}
               onClick={() => onAsk(s)}
-              className="min-h-11 rounded border border-stone-200 px-3 py-2 text-xs text-ink hover:bg-card-hover"
+              className="min-h-10 rounded-md border border-stone-200 px-2.5 py-1.5 text-xs leading-5 text-ink hover:bg-card-hover sm:min-h-9"
             >
               {s}
             </button>

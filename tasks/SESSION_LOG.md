@@ -1,5 +1,26 @@
 # Session Log
 
+## 2026-07-21–22 — Cross-device Lesson Text Selection
+
+- Added selected-text actions throughout the active lesson content without changing normal underlined-vocabulary click behavior.
+- From the `sm` breakpoint upward, actions appear in a compact floating toolbar beside the selected range; smaller layouts use a fixed bottom action bar with the same controls.
+- `Add to Notebook` stores the selection under Phrases with its source lesson, source section, surrounding context, and an exact per-section duplicate key.
+- Upgraded the browser-local Notebook envelope to version 6 while migrating versions 1–5, and included phrase context/section in search, cards, and full detail dialogs.
+- `Explain More` opens AI Tutor with the selected excerpt as its current focus and sends the selection, source section, and surrounding lesson context to the existing mock explanation flow.
+- Added selection-aware click capture so dragging across interactive vocabulary or card content does not accidentally activate the underlying control.
+- ESLint, strict TypeScript, backend pytest (1 test), `git diff --check`, and an isolated Next.js webpack production build pass with all expected routes.
+- A headless Chrome interaction check passed at desktop and 390×844: both action layouts appeared, phrase persistence and duplicate state worked, AI Tutor opened, and the Notebook card/detail view retained the section and context.
+- After learner review, changed pointer/touch selection so the actions stay hidden during highlighting and appear only after release; keyboard selection uses a short idle delay. Reduced the floating toolbar to 12px labels, 36px actions, and an approximately 40px-high container while retaining larger phone touch targets.
+- A focused browser check confirmed the toolbar was absent during active selection and appeared after release at approximately 217×40px.
+- After reviewing the selected-text Tutor result, kept the panel title fixed as `Study Assistant` and changed selected-text, vocabulary, and grammar `Explain More` flows to append a visible learner request before the assistant response.
+- Compacted the AI Tutor follow-up suggestion chips with smaller minimum heights, padding, corner radius, and inter-chip spacing while preserving readable 12px labels and larger phone targets.
+- The learner approved the final selection timing, compact selection actions, conversational Explain More treatment, and smaller follow-up suggestions.
+- Commit-readiness validation passed: ESLint, strict TypeScript, backend pytest (1 test), `git diff --check`, an isolated Next.js webpack production build, scope review, conflict-marker scan, and credential-pattern scan.
+
+### Exact Next Step
+
+- Continue with the next user-directed refinement from this learner-approved checkpoint.
+
 ## 2026-07-21 — Notebook Lesson Shelves and Full Collections
 
 - Replaced the downward-growing Notebook group grids with horizontal lesson shelves.

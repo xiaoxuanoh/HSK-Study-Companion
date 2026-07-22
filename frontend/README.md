@@ -2,6 +2,8 @@
 
 Current baseline: Next.js 16.2.10, React 19.2.7, TypeScript 5.9.3, and ESLint 9 flat configuration.
 
+The lesson workspace supports selecting lesson text on desktop and touch-sized layouts. The contextual actions can save the excerpt as a Phrase with its lesson context or open it directly in AI Tutor.
+
 Node.js 20.9 or newer is required.
 
 ## Run

@@ -6,7 +6,7 @@ Build a polished first-draft HSK self-study website that provides teacher-style 
 
 ## Current Priority
 
-The latest `agent/add-lesson-navigation` checkpoint includes all eight lesson-refinement points, navigation/card/popup polish, the reviewed responsive/accessibility and AI-chat work, and the learner-approved Notebook shelf refinement: three horizontal previews, an unboxed View All selection, fixed-size detail cards, and lesson collection routes. Supabase work remains paused on `feature/supabase-integration`; do not merge, extend, or activate it unless the user explicitly resumes that work.
+The latest `agent/add-lesson-navigation` checkpoint includes all eight lesson-refinement points, navigation/card/popup polish, the reviewed responsive/accessibility and AI-chat work, the learner-approved Notebook shelf refinement, and cross-device lesson text selection with Add to Notebook and Explain More actions. Supabase work remains paused on `feature/supabase-integration`; do not merge, extend, or activate it unless the user explicitly resumes that work.
 
 ## Build Principles
 
@@ -38,6 +38,7 @@ See docs/explanation-style.md for full templates.
 - Sections: Warm-up, Passage, Vocabulary, Grammar Notes, Word Distinction, Exercises, Writing, Expansion
 - Dedicated course-wide My Notebook page with versioned browser persistence
 - Clickable vocabulary popups in Passage section
+- Cross-device selected-text actions for saving contextual Phrases or opening AI Tutor
 - AI tutor panel with mock responses
 - FastAPI backend with mock endpoints
 
@@ -73,7 +74,7 @@ See docs/explanation-style.md for full templates.
 ## Current Branch State
 
 - `main` and `origin/main` contain the tested Next.js 16 security upgrade at `e41f637`.
-- `agent/add-lesson-navigation` and its upstream contain all eight completed refinement points plus Dashboard/sidebar, lesson-card/popup, responsive/accessibility, AI-chat, and Notebook shelf/collection refinements in the latest published checkpoint.
+- `agent/add-lesson-navigation` contains the learner-approved responsive/accessibility, AI-chat, Notebook shelf/collection, and selected-text workflows in its latest checkpoint.
 - The latest checkpoint passes ESLint, TypeScript, backend pytest, `git diff --check`, and an isolated production build.
 - `feature/supabase-integration` contains the paused Supabase foundation at `3cbccf6` and is not part of `main`.
 - Do not assume pushing `main` includes or activates Supabase.

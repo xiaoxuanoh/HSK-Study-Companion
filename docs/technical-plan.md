@@ -15,13 +15,15 @@
 - `LessonOverviewModal` — modal before entering a lesson
 - `LeftNav` — lesson section tab navigation
 - `AITutorPanel` — right-side AI tutor panel
+- `TextSelectionActions` — responsive toolbar for selected lesson text
 - `VocabPopup` — small popup on vocabulary word click
 - Section components: `PassageSection`, `VocabularySection`, `GrammarSection`, `WordDistinctionSection`, `ExercisesSection`, `WritingSection`, `WarmupSection`, `ExpansionSection`
 
 ### State Management
 - React local state for current section, selected item, exercise answers, and AI panel content
 - AI messages and current focus survive Tutor close/reopen during the mounted lesson visit; confirmed clearing resets them, while leaving or reloading the lesson starts fresh
-- `frontend/lib/notebook.ts` provides a versioned local-storage repository and React subscription hook for course-wide notebook data
+- `frontend/lib/notebook.ts` provides a versioned local-storage repository and React subscription hook for course-wide notebook data; version 6 adds optional selected-text context and source-section metadata
+- Lesson text selection uses the browser Selection/Range APIs within the active content scope; it does not intercept selections outside lesson content
 - Notebook UI depends on the `NotebookRepository` interface so browser storage can later be replaced by an account-backed implementation
 - The course-wide overview shows up to three recent, fixed-size cards per collection in a horizontal row followed by a persistent View All tile; long content and item management live in an accessible details dialog
 - No external state library needed for the prototype

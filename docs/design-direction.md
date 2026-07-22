@@ -50,6 +50,14 @@
 - Click: small popup card appears near the word
 - Popup: white card, subtle shadow, close button
 
+### Selected Lesson Text Actions
+
+- Allow text selection throughout the active lesson content without replacing normal vocabulary clicks.
+- From `sm` upward, place a compact dark floating toolbar beside the highlighted range.
+- Below `sm`, place the same actions in a fixed dark bar near the bottom edge for larger touch targets.
+- Keep the two primary actions concise: `Add to Notebook` and `Explain More`.
+- Saved excerpts use the Phrases collection and retain their lesson section and surrounding context.
+
 ### Vocabulary Cards
 - Chinese word prominent (large font)
 - Pinyin in gray below
@@ -82,7 +90,7 @@
 - The complete lesson collection uses the same fixed-size cards in a responsive grid with collection-specific search and type filters.
 
 ### AI Tutor Panel
-- Header with selected item name
+- Stable `Study Assistant` header; selected words, grammar points, and excerpts appear as learner messages in the conversation
 - Clear chat and Close actions
 - Contextual suggestion chips (wrap on smaller widths)
 - Scrollable chat area

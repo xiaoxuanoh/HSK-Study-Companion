@@ -23,6 +23,8 @@ const matchesSearch = (item: NotebookItem, query: string) => {
     item.title,
     item.pinyin,
     item.summary,
+    item.context,
+    item.sourceSection,
     item.structure,
     item.myAnswer,
     item.correctAnswer,

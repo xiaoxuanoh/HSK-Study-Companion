@@ -86,11 +86,25 @@ AI Tutor Panel (right panel)
   └─> Typed questions receive mock responses for the selected context
 ```
 
+## Selected Lesson Text Flow
+
+```
+Learner highlights text inside the current lesson section
+  └─> Contextual actions appear
+        ├─> `sm` and wider: floating toolbar beside the selection
+        └─> Smaller layout: fixed bottom action bar
+              ├─> [Add to Notebook]
+              │     ├─> Saves as a Phrase with lesson, section, and surrounding context
+              │     └─> Duplicate selection shows In Notebook
+              └─> [Explain More]
+                    └─> Opens AI Tutor, shows the request as a learner message, then returns the contextual explanation
+```
+
 ## Notebook Save Flow
 
 ```
 Any section
-  └─> [Add to Notebook] on vocabulary or grammar details, or an incorrect exercise
+  └─> [Add to Notebook] on vocabulary/grammar details, an incorrect exercise, or selected lesson text
         ├─> Duplicate check for the same lesson item
         └─> Item saved to versioned browser storage
               └─> Dedicated Notebook page provides:

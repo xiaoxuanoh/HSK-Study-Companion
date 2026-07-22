@@ -71,8 +71,9 @@ If the running development server should not be stopped, do not run `next build`
 
 - Existing selectable words in the Passage are curated vocabulary entries, including multi-character Chinese words.
 - Reserve `phrase` for reusable collocations, chunks, or selected excerpts rather than treating every multi-character word as a phrase.
-- The Notebook data model may keep phrase support future-ready even when no current UI creates phrase records.
-- A future text-selection menu may offer “Add to Notebook,” “Ask AI Tutor,” and “Explain selection”; it should not automatically claim that every arbitrary selection is linguistically a phrase.
+- The lesson text-selection workflow now stores learner-selected words, sentences, or excerpts under the learner-facing `Phrases` collection, with the source section and surrounding context retained.
+- Normal clicks on curated underlined vocabulary must continue to open vocabulary details. A non-collapsed text selection takes priority so drag selection does not accidentally activate the underlying control.
+- Use a floating toolbar beside the selection from `sm` upward and a fixed bottom action bar below `sm`; this keeps the actions consistent while leaving room to fine-tune native touch selection later.
 
 ---
 
@@ -113,12 +114,13 @@ messages: { role: 'user' | 'assistant'; content: string }[]
 currentFocus: string  // the word or topic being studied
 ```
 
-- `onExplain` (word clicked → Explain More): appends assistant message only — no user bubble
+- Every `Explain More` entry point appends a learner bubble describing the request, followed by the assistant response; selected text belongs in the conversation, not in the Tutor header
 - `onAsk` (suggestion chip or typed input): appends user message then assistant response
 - `handleAiClose`: hides the panel without deleting the current lesson-visit conversation
 - `handleAiClear`: clears both `messages` and `currentFocus` after user confirmation
 - Leaving or reloading the lesson starts a fresh conversation; persistent cross-visit chat history is deferred
-- Panel stays open + new word explained: messages accumulate, `currentFocus` updates to new word
+- The Tutor header remains `Study Assistant`; `currentFocus` stays internal so follow-up behavior can track the latest word, grammar point, or selected excerpt without replacing the panel title
+- Panel stays open + new item explained: learner/assistant message pairs accumulate and `currentFocus` updates internally
 - Below the `xl` breakpoint the Tutor is a modal dialog with trapped focus; at `xl` and above it is an inline complementary panel that does not trap keyboard users
 
 ---
@@ -140,7 +142,7 @@ currentFocus: string  // the word or topic being studied
   - Writing/Application workspace with lesson guidance, a locally autosaved editor, character count, confirmed clearing controls, supportive feedback, and retained feedback history
   - Expansion reading card with comfortable Chinese typography and a visually distinct English translation
 - My Notebook is a dedicated course-wide `/notebook` workspace backed by a versioned browser-storage repository.
-- It supports vocabulary, grammar, exercise mistakes, future phrases, and personal notes with search, filtering, source grouping, editable remarks, and confirmed removal.
+- It supports vocabulary, grammar, exercise mistakes, selected-text phrases, and personal notes with search, filtering, source grouping, editable remarks, and confirmed removal.
 - Keep each lesson overview compact: order by most recently updated, show at most three equal-size note previews in a horizontal row, and place an unboxed `View all notes` selection immediately after the final preview regardless of the saved-note count.
 - Keep full remarks out of the fixed-height preview card and represent their presence as Yes/No. Keep confirmed removal visible on the card. `View details` opens the complete note and its edit/remove actions in an accessible popup; `/notebook/[lessonId]` provides the complete searchable collection.
 - Writing/Application drafts and non-scored feedback histories are retained per lesson through a separate versioned browser-storage repository.
