@@ -24,6 +24,7 @@
 - React local state for current section, selected item, exercise answers, and AI panel content
 - AI messages and current focus survive Tutor close/reopen during the mounted lesson visit; confirmed clearing resets them, while leaving or reloading the lesson starts fresh
 - `frontend/lib/notebook.ts` provides a versioned local-storage repository and React subscription hook for course-wide notebook data; version 6 adds optional selected-text context and source-section metadata
+- Saved Notebook records expose stable target URLs through their persisted item IDs; source-backed records route to `/notebook/[lessonId]?note=...`, while standalone records route to `/notebook/standalone?note=...`
 - Lesson and AI Tutor text selection use the browser Selection/Range APIs within their active content scopes; selections outside those scopes are not intercepted
 - Tutor excerpts saved from a lesson retain that lesson source; course-wide Notebook Tutor excerpts remain standalone and carry `AI Tutor` source-section metadata
 - Notebook UI depends on the `NotebookRepository` interface so browser storage can later be replaced by an account-backed implementation

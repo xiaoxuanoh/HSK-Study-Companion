@@ -111,6 +111,8 @@ Learner highlights text inside the current lesson section
 Any section
   └─> [Add to Notebook] on vocabulary/grammar details, an incorrect exercise, selected lesson text, or selected AI Tutor text
         ├─> Duplicate check for the same lesson item
+        ├─> Existing saved items expose [View in Notebook]
+        │     └─> Opens the complete collection, scrolls to the saved card, and highlights it
         └─> Item saved to versioned browser storage
               └─> Dedicated Notebook page provides:
                     ├─> Search and type filters

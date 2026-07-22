@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import AITutorPanel from "@/components/AITutorPanel";
 import type { StudyTextSelection } from "@/components/TextSelectionActions";
 import { askAI } from "@/lib/api";
-import { makeNotebookDedupeKey, type NotebookSource, useNotebook } from "@/lib/notebook";
+import { getNotebookItemHref, makeNotebookDedupeKey, type NotebookSource, useNotebook } from "@/lib/notebook";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -100,9 +100,14 @@ export default function NotebookAITutor({ source }: Props) {
             emptyStateText="Ask a study question, then select any useful part of the conversation to explain it further or save it."
             selectionActions={{
               isSaved: (selection) => items.some((item) => item.dedupeKey === selectionDedupeKey(selection)),
+              getNotebookHref: (selection) => {
+                const savedItem = items.find((item) => item.dedupeKey === selectionDedupeKey(selection));
+                return savedItem ? getNotebookItemHref(savedItem) : null;
+              },
               onAddToNotebook: (selection) => addItem({
                 type: "phrase",
                 title: selection.text,
+                summary: selection.context,
                 context: selection.context,
                 sourceSection: "AI Tutor",
                 source,

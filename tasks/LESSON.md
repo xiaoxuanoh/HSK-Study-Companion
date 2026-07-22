@@ -74,6 +74,8 @@ If the running development server should not be stopped, do not run `next build`
 - The lesson text-selection workflow now stores learner-selected words, sentences, or excerpts under the learner-facing `Phrases` collection, with the source section and surrounding context retained.
 - Normal clicks on curated underlined vocabulary must continue to open vocabulary details. A non-collapsed text selection takes priority so drag selection does not accidentally activate the underlying control.
 - Use a floating toolbar beside the selection from `sm` upward and a fixed bottom action bar below `sm`; this keeps the actions consistent while leaving room to fine-tune native touch selection later.
+- `View in Notebook` should only appear when a saved record already exists. Use the saved item's persisted `id` for navigation and the `dedupeKey` only to detect whether the content already exists.
+- Targeted note links should route to `/notebook/[lessonId]?note=...` or `/notebook/standalone?note=...`, then scroll and highlight the card. Do not auto-open the details dialog unless the learner explicitly asks for that behavior.
 
 ---
 

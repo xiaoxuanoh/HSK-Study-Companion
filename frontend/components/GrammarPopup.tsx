@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 type GrammarItem = {
   id: string;
@@ -25,6 +26,7 @@ export default function GrammarPopup({
   onExplain,
   isInNotebook,
   onAddToNotebook,
+  notebookHref,
 }: {
   item: GrammarItem;
   position: Position;
@@ -32,6 +34,7 @@ export default function GrammarPopup({
   onExplain: () => void;
   isInNotebook: boolean;
   onAddToNotebook: () => void;
+  notebookHref?: string | null;
 }) {
   const popupRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -59,7 +62,7 @@ export default function GrammarPopup({
       }
       if (event.key !== "Tab" || !popupRef.current) return;
       const controls = Array.from(
-        popupRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+        popupRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')
       );
       const first = controls[0];
       const last = controls.at(-1);
@@ -101,14 +104,23 @@ export default function GrammarPopup({
           <button type="button" onClick={onExplain} className="min-h-9 rounded-lg bg-accent px-2.5 py-1.5 text-[11px] font-medium text-white hover:bg-accent-hover">
             Explain More
           </button>
-          <button
-            type="button"
-            onClick={onAddToNotebook}
-            disabled={isInNotebook}
-            className="min-h-9 rounded-lg border border-stone-300 px-2.5 py-1.5 text-[11px] font-medium text-ink hover:bg-paper disabled:cursor-default disabled:border-accent/40 disabled:bg-paper disabled:text-accent"
-          >
-            {isInNotebook ? "✓ In Notebook" : "Add to Notebook"}
-          </button>
+          {isInNotebook && notebookHref ? (
+            <Link
+              href={notebookHref}
+              className="inline-flex min-h-9 items-center rounded-lg border border-stone-300 px-2.5 py-1.5 text-[11px] font-medium text-accent hover:bg-paper hover:text-accent-hover"
+            >
+              View in Notebook
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={onAddToNotebook}
+              disabled={isInNotebook}
+              className="min-h-9 rounded-lg border border-stone-300 px-2.5 py-1.5 text-[11px] font-medium text-ink hover:bg-paper disabled:cursor-default disabled:border-accent/40 disabled:bg-paper disabled:text-accent"
+            >
+              {isInNotebook ? "✓ In Notebook" : "Add to Notebook"}
+            </button>
+          )}
           <button ref={closeButtonRef} type="button" onClick={onClose} className="flex min-h-9 shrink-0 items-center px-1.5 text-[11px] text-muted hover:text-ink">
             Close
           </button>

@@ -1,5 +1,20 @@
 # Session Log
 
+## 2026-07-22 — Targeted View in Notebook Links
+
+- Added stable Notebook item target URLs using existing persisted item IDs, with lesson-backed items routed to `/notebook/[lessonId]?note=...` and standalone items routed to `/notebook/standalone?note=...`.
+- Changed saved lesson vocabulary, grammar, exercise mistakes, selected lesson text, selected lesson Tutor text, and selected Notebook Tutor text so existing Notebook records can show `View in Notebook`.
+- Kept unsaved content on `Add to Notebook`; `View in Notebook` appears only after a matching saved record exists.
+- Added targeted Notebook collection handling that clears local filters/search for the target, scrolls the matching card into view, and highlights it without automatically opening the details popup.
+- Updated popup and Tutor focus handling so the new links are included in keyboard focus loops.
+- Updated Phrase card display so fixed-size previews prioritize `summary`; phrases without a saved explanation now show `No explanation yet.` while the original passage/Tutor context stays in the details popup under `Original context`.
+- Updated AI Tutor phrase saves so selected Tutor text stores the surrounding Tutor message as `summary`, allowing the Notebook card to show the Tutor explanation instead of the empty-explanation fallback.
+- Frontend ESLint and strict TypeScript passed.
+
+### Exact Next Step
+
+- Visually review saved-item `View in Notebook` links from lesson popups, exercise mistakes, selected lesson text, and Tutor selections before deciding whether to add toast feedback or auto-open details.
+
 ## 2026-07-22 — Notebook Tutor Launcher and Selectable Tutor Responses
 
 - Confirmed the missing Notebook AI button was structural: the existing draggable launcher was mounted only by the lesson route.

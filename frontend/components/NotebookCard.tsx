@@ -31,6 +31,8 @@ function NotebookDetailsModal({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const viewQuestionButtonRef = useRef<HTMLButtonElement>(null);
   const noteLabel = item.type === "personal-note" ? "Note" : "Personal remark";
+  const summaryLabel = item.type === "phrase" ? "Explanation" : null;
+  const contextLabel = item.type === "phrase" ? "Original context" : "Lesson context";
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -119,10 +121,21 @@ function NotebookDetailsModal({
               Saved {new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(item.createdAt))}
             </time>
 
-            {item.summary ? <p className="mt-4 text-base leading-7 text-ink">{item.summary}</p> : null}
+            {item.summary ? (
+              summaryLabel ? (
+                <section className="mt-4" aria-labelledby={`notebook-summary-${item.id}`}>
+                  <h3 id={`notebook-summary-${item.id}`} className="text-xs font-semibold uppercase tracking-wide text-muted">
+                    {summaryLabel}
+                  </h3>
+                  <p className="mt-1 text-base leading-7 text-ink">{item.summary}</p>
+                </section>
+              ) : (
+                <p className="mt-4 text-base leading-7 text-ink">{item.summary}</p>
+              )
+            ) : null}
             {item.context && item.context !== item.title ? (
               <div className="mt-4 rounded-xl bg-paper p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted">Lesson context</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted">{contextLabel}</p>
                 <p className="mt-1 text-sm leading-6 text-ink">{item.context}</p>
               </div>
             ) : null}
@@ -260,16 +273,23 @@ export default function NotebookCard({
   item,
   onUpdateNote,
   onRemove,
+  htmlId,
+  isHighlighted = false,
   className = "",
 }: {
   item: NotebookItem;
   onUpdateNote: (id: string, note: string) => void;
   onRemove: (id: string) => void;
+  htmlId?: string;
+  isHighlighted?: boolean;
   className?: string;
 }) {
   const [showDetails, setShowDetails] = useState(false);
   const detailsButtonRef = useRef<HTMLButtonElement>(null);
   const noteLabel = item.type === "personal-note" ? "Note" : "Personal remark";
+  const phrasePreview = item.type === "phrase"
+    ? item.summary || "No explanation yet."
+    : null;
 
   const closeDetails = useCallback(() => {
     setShowDetails(false);
@@ -278,7 +298,12 @@ export default function NotebookCard({
 
   return (
     <>
-      <article className={`flex h-[18rem] min-w-0 flex-col overflow-hidden rounded-xl border border-stone-200 bg-card p-4 shadow-sm ${className}`}>
+      <article
+        id={htmlId}
+        className={`scroll-mt-28 flex h-[18rem] min-w-0 flex-col overflow-hidden rounded-xl border bg-card p-4 shadow-sm transition-shadow ${
+          isHighlighted ? "border-accent ring-2 ring-accent/50" : "border-stone-200"
+        } ${className}`}
+      >
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">{notebookTypeLabels[item.type]}</p>
@@ -293,8 +318,8 @@ export default function NotebookCard({
 
         <div className="min-h-0 flex-1 overflow-hidden">
           {item.summary ? <p className="mt-3 line-clamp-3 text-sm leading-6 text-ink">{item.summary}</p> : null}
-          {!item.summary && item.type === "phrase" && item.context && item.context !== item.title ? (
-            <p className="mt-3 line-clamp-3 text-sm leading-6 text-ink">{item.context}</p>
+          {phrasePreview && !item.summary ? (
+            <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted">{phrasePreview}</p>
           ) : null}
           {item.structure ? (
             <div className="mt-3 rounded-lg bg-paper p-3 text-sm">

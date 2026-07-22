@@ -9,7 +9,7 @@ import TextSelectionActions, { type StudyTextSelection } from "@/components/Text
 import VocabPopup from "@/components/VocabPopup";
 import WritingWorkspace from "@/components/WritingWorkspace";
 import { askAI, getLesson } from "@/lib/api";
-import { makeNotebookDedupeKey, useNotebook } from "@/lib/notebook";
+import { getNotebookItemHref, makeNotebookDedupeKey, useNotebook } from "@/lib/notebook";
 import type { LessonData } from "@/lib/types";
 
 const sectionOrder = [
@@ -229,6 +229,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const vocabIsInNotebook = vocabItem
     ? notebook.some((item) => item.dedupeKey === vocabDedupeKey)
     : false;
+  const savedVocabItem = vocabDedupeKey
+    ? notebook.find((item) => item.dedupeKey === vocabDedupeKey)
+    : undefined;
   const grammarItems = lesson.sections.grammar.items as GrammarItem[];
   const selectedGrammar = selectedGrammarId
     ? grammarItems.find((item) => item.id === selectedGrammarId) ?? null
@@ -239,6 +242,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const grammarIsInNotebook = selectedGrammar
     ? notebook.some((item) => item.dedupeKey === grammarDedupeKey)
     : false;
+  const savedGrammarItem = grammarDedupeKey
+    ? notebook.find((item) => item.dedupeKey === grammarDedupeKey)
+    : undefined;
   const phraseDedupeKey = (selection: StudyTextSelection) => makeNotebookDedupeKey(
     "phrase",
     lesson.id,
@@ -496,11 +502,13 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             <div className="mt-4 space-y-4">
               {(lesson.sections.exercises.items as ExerciseItem[]).map((item) => {
                 const mistakeDedupeKey = makeNotebookDedupeKey("mistake", lesson.id, item.id);
+                const savedMistakeItem = notebook.find((savedItem) => savedItem.dedupeKey === mistakeDedupeKey);
                 return (
                   <ExerciseCard
                     key={item.id}
                     item={item}
-                    isInNotebook={notebook.some((savedItem) => savedItem.dedupeKey === mistakeDedupeKey)}
+                    isInNotebook={Boolean(savedMistakeItem)}
+                    notebookHref={savedMistakeItem ? getNotebookItemHref(savedMistakeItem) : null}
                     onAddMistake={(mistake) => addNotebookItem({
                       type: "mistake",
                       title: mistake.title,
@@ -555,6 +563,10 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             sectionKey={section}
             sectionTitle={lesson.sections[section].title}
             isSaved={(selection) => notebook.some((item) => item.dedupeKey === phraseDedupeKey(selection))}
+            getNotebookHref={(selection) => {
+              const savedItem = notebook.find((item) => item.dedupeKey === phraseDedupeKey(selection));
+              return savedItem ? getNotebookItemHref(savedItem) : null;
+            }}
             onAddToNotebook={(selection) => addNotebookItem({
               type: "phrase",
               title: selection.text,
@@ -588,6 +600,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               position={popupPos}
               itemType="vocabulary"
               isInNotebook={vocabIsInNotebook}
+              notebookHref={savedVocabItem ? getNotebookItemHref(savedVocabItem) : null}
               onClose={() => closeVocabPopup()}
               onExplain={() => {
                 const word = vocabItem.word;
@@ -632,6 +645,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 });
               }}
               isInNotebook={grammarIsInNotebook}
+              notebookHref={savedGrammarItem ? getNotebookItemHref(savedGrammarItem) : null}
               onAddToNotebook={() => addNotebookItem({
                 type: "grammar",
                 title: selectedGrammar.grammarPoint,
@@ -655,9 +669,14 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               onClose={handleAiClose}
               selectionActions={{
                 isSaved: (selection) => notebook.some((item) => item.dedupeKey === phraseDedupeKey(selection)),
+                getNotebookHref: (selection) => {
+                  const savedItem = notebook.find((item) => item.dedupeKey === phraseDedupeKey(selection));
+                  return savedItem ? getNotebookItemHref(savedItem) : null;
+                },
                 onAddToNotebook: (selection) => addNotebookItem({
                   type: "phrase",
                   title: selection.text,
+                  summary: selection.context,
                   context: selection.context,
                   sourceSection: selection.sectionTitle,
                   source: notebookSource,

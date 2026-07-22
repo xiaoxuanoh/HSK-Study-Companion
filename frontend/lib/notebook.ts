@@ -144,6 +144,11 @@ export const makeNotebookDedupeKey = (
   contentId: string
 ) => `${type}:${lessonId}:${contentId}`;
 
+export const getNotebookItemHref = (item: Pick<NotebookItem, "id" | "source">) => {
+  const collectionId = item.source?.lessonId ?? "standalone";
+  return `/notebook/${encodeURIComponent(collectionId)}?note=${encodeURIComponent(item.id)}`;
+};
+
 const isNotebookItem = (value: unknown): value is NotebookItem => {
   if (!value || typeof value !== "object") return false;
   const item = value as Partial<NotebookItem>;

@@ -177,18 +177,18 @@ export default function NotebookPage() {
           </section>
         ) : null}
 
-        <section aria-labelledby="notebook-tools" className={`${showNoteForm ? "mt-6" : ""} rounded-xl border border-stone-200 bg-card p-4 shadow-sm sm:p-5`}>
+        <section aria-labelledby="notebook-tools" className={`${showNoteForm ? "mt-6" : ""} rounded-xl border border-stone-200 bg-card p-3 shadow-sm sm:p-4`}>
           <h2 id="notebook-tools" className="sr-only">Search and filter notebook</h2>
-          <label htmlFor="notebook-search" className="text-sm font-medium text-ink">Search My Notebook</label>
+          <label htmlFor="notebook-search" className="text-xs font-medium text-ink sm:text-sm">Search My Notebook</label>
           <input
             id="notebook-search"
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            className="mt-2 min-h-11 w-full rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm"
+            className="mt-1.5 min-h-10 w-full rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm"
             placeholder="Search words, explanations, remarks, or lessons…"
           />
-          <div className="mt-4 flex flex-wrap gap-2" aria-label="Filter notebook by type">
+          <div className="mt-2.5 flex flex-wrap gap-1.5" aria-label="Filter notebook by type">
             {filters.map((option) => {
               const count = option.value === "all" ? items.length : items.filter((item) => item.type === option.value).length;
               return (
@@ -197,7 +197,7 @@ export default function NotebookPage() {
                   type="button"
                   aria-pressed={filter === option.value}
                   onClick={() => setFilter(option.value)}
-                  className={`min-h-11 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                  className={`min-h-8 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
                     filter === option.value
                       ? "border-accent bg-accent text-white"
                       : "border-stone-300 bg-white text-ink hover:bg-paper"

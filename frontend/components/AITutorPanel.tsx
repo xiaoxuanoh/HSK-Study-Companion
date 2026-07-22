@@ -16,6 +16,7 @@ type Props = {
     isSaved: (selection: StudyTextSelection) => boolean;
     onAddToNotebook: (selection: StudyTextSelection) => boolean;
     onExplainMore: (selection: StudyTextSelection) => void;
+    getNotebookHref?: (selection: StudyTextSelection) => string | null;
   };
 };
 
@@ -84,7 +85,7 @@ export default function AITutorPanel({
     if (!isModal || event.key !== "Tab" || !panelRef.current) return;
     const controls = Array.from(
       panelRef.current.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
       )
     );
     const first = controls[0];

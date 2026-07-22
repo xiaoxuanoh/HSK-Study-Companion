@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import type { NotebookExerciseContext } from "@/lib/notebook";
 
 type FillBlankSentence = {
@@ -60,10 +61,12 @@ const normalizeAnswer = (answer: string) => answer.trim().replaceAll(" ", "");
 export default function ExerciseCard({
   item,
   isInNotebook = false,
+  notebookHref,
   onAddMistake,
 }: {
   item: ExerciseItem;
   isInNotebook?: boolean;
+  notebookHref?: string | null;
   onAddMistake?: (mistake: ExerciseMistake) => void;
 }) {
   const [fillAnswers, setFillAnswers] = useState<Record<string, string>>({});
@@ -303,14 +306,23 @@ export default function ExerciseCard({
 
           {!isCorrect && onAddMistake ? (
             <div className="mt-4 flex justify-end">
-              <button
-                type="button"
-                onClick={handleAddMistake}
-                disabled={isInNotebook}
-                className="min-h-11 rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-ink hover:bg-white disabled:cursor-default disabled:border-accent/40 disabled:bg-paper disabled:text-accent"
-              >
-                {isInNotebook ? "✓ Mistake in Notebook" : "Add Mistake to Notebook"}
-              </button>
+              {isInNotebook && notebookHref ? (
+                <Link
+                  href={notebookHref}
+                  className="inline-flex min-h-11 items-center rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-accent hover:bg-white hover:text-accent-hover"
+                >
+                  View in Notebook
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleAddMistake}
+                  disabled={isInNotebook}
+                  className="min-h-11 rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-ink hover:bg-white disabled:cursor-default disabled:border-accent/40 disabled:bg-paper disabled:text-accent"
+                >
+                  {isInNotebook ? "✓ Mistake in Notebook" : "Add Mistake to Notebook"}
+                </button>
+              )}
             </div>
           ) : null}
         </div>

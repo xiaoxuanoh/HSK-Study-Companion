@@ -22,6 +22,7 @@ type Props = {
   isSaved: (selection: StudyTextSelection) => boolean;
   onAddToNotebook: (selection: StudyTextSelection) => boolean;
   onExplainMore: (selection: StudyTextSelection) => void;
+  getNotebookHref?: (selection: StudyTextSelection) => string | null;
   ariaLabel?: string;
 };
 
@@ -38,6 +39,7 @@ export default function TextSelectionActions({
   isSaved,
   onAddToNotebook,
   onExplainMore,
+  getNotebookHref,
   ariaLabel = "Actions for selected lesson text",
 }: Props) {
   const [selection, setSelection] = useState<SelectionState | null>(null);
@@ -167,6 +169,7 @@ export default function TextSelectionActions({
 
   const studySelection: StudyTextSelection = selection;
   const saved = isSaved(studySelection);
+  const notebookHref = saved ? getNotebookHref?.(studySelection) ?? null : null;
   const preserveSelection = (event: PointerEvent<HTMLButtonElement>) => {
     actionPointerDownRef.current = true;
     event.preventDefault();
@@ -177,20 +180,35 @@ export default function TextSelectionActions({
 
   const actions = (
     <>
-      <button
-        type="button"
-        onPointerDown={preserveSelection}
-        onPointerCancel={finishAction}
-        onClick={() => {
-          const added = onAddToNotebook(studySelection);
-          setFeedback(added ? "Added to Notebook" : "Already in Notebook");
-          finishAction();
-        }}
-        disabled={saved}
-        className="min-h-11 rounded-md px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/10 disabled:cursor-default disabled:text-white/60 sm:min-h-9"
-      >
-        {saved ? "✓ In Notebook" : "Add to Notebook"}
-      </button>
+      {notebookHref ? (
+        <a
+          href={notebookHref}
+          onPointerDown={(event) => {
+            actionPointerDownRef.current = true;
+            event.preventDefault();
+          }}
+          onPointerCancel={finishAction}
+          onClick={finishAction}
+          className="inline-flex min-h-11 items-center rounded-md px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/10 sm:min-h-9"
+        >
+          View in Notebook
+        </a>
+      ) : (
+        <button
+          type="button"
+          onPointerDown={preserveSelection}
+          onPointerCancel={finishAction}
+          onClick={() => {
+            const added = onAddToNotebook(studySelection);
+            setFeedback(added ? "Added to Notebook" : "Already in Notebook");
+            finishAction();
+          }}
+          disabled={saved}
+          className="min-h-11 rounded-md px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/10 disabled:cursor-default disabled:text-white/60 sm:min-h-9"
+        >
+          {saved ? "✓ In Notebook" : "Add to Notebook"}
+        </button>
+      )}
       <span className="h-6 w-px bg-white/20 sm:h-5" aria-hidden="true" />
       <button
         type="button"

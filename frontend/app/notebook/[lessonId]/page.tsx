@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import NotebookCard from "@/components/NotebookCard";
 import NotebookAITutor from "@/components/NotebookAITutor";
 import { type NotebookItem, type NotebookItemType, useNotebook } from "@/lib/notebook";
@@ -45,21 +45,36 @@ const matchesSearch = (item: NotebookItem, query: string) => {
 
 export default function LessonNotebookPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
+  const searchParams = useSearchParams();
   const { items, updatePersonalNote, removeItem } = useNotebook();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterValue>("all");
   const isStandalone = lessonId === "standalone";
+  const targetNoteId = searchParams.get("note");
 
   const lessonItems = useMemo(() => items
     .filter((item) => (isStandalone ? !item.source : item.source?.lessonId === lessonId))
     .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt)), [isStandalone, items, lessonId]);
   const source = lessonItems.find((item) => item.source)?.source;
   const query = search.trim().toLocaleLowerCase();
+  const targetItem = targetNoteId ? lessonItems.find((item) => item.id === targetNoteId) : undefined;
+  const effectiveFilter = targetItem ? "all" : filter;
+  const effectiveQuery = targetItem ? "" : query;
   const visibleItems = useMemo(() => lessonItems.filter((item) => (
-    (filter === "all" || item.type === filter) && matchesSearch(item, query)
-  )), [filter, lessonItems, query]);
+    (effectiveFilter === "all" || item.type === effectiveFilter) && matchesSearch(item, effectiveQuery)
+  )), [effectiveFilter, effectiveQuery, lessonItems]);
 
   const collectionTitle = isStandalone ? "Standalone Notes" : source?.titleChinese ?? "Lesson Notes";
+
+  useEffect(() => {
+    if (!targetNoteId || !visibleItems.some((item) => item.id === targetNoteId)) return;
+    window.requestAnimationFrame(() => {
+      document.getElementById(`notebook-item-${targetNoteId}`)?.scrollIntoView({
+        block: "center",
+        behavior: "smooth",
+      });
+    });
+  }, [targetNoteId, visibleItems]);
 
   return (
     <div className="min-h-[100dvh] bg-paper text-ink">
@@ -148,6 +163,8 @@ export default function LessonNotebookPage() {
                 <NotebookCard
                   key={item.id}
                   item={item}
+                  htmlId={`notebook-item-${item.id}`}
+                  isHighlighted={item.id === targetNoteId}
                   onUpdateNote={updatePersonalNote}
                   onRemove={removeItem}
                 />
