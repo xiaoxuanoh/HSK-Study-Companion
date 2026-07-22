@@ -34,8 +34,9 @@ Textbook and workbook materials for HSK are available, but proper explanations, 
 - Word distinction / near-synonym comparison tables
 - Exercise section with answer reasoning
 - Writing workspace with prompt guidance, an autosaved local draft, character counter, confirmed reset controls, and retained supportive feedback history
-- Responsive AI Tutor with mock context-aware responses, current-visit chat retention, and confirmed clearing
+- Responsive AI Tutor with mock context-aware responses, current-visit chat retention, confirmed clearing, and selectable response text
 - Cross-device lesson text selection with contextual Add to Notebook and Explain More actions
+- AI Tutor launchers on lesson and Notebook routes, with selected Tutor text saved as contextual Phrases
 - Dedicated course-wide Notebook with versioned browser persistence, horizontal three-note lesson previews, full lesson collections, fixed-size detail cards, search, filters, remarks, personal notes, and mistake review
 
 ## Future Plans

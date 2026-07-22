@@ -83,8 +83,13 @@ AI Tutor Panel (right panel)
   ├─> Closing and reopening retains the conversation for the current lesson visit
   ├─> [Clear chat] removes the current conversation after confirmation
   ├─> Leaving or reloading the lesson starts a fresh conversation
+  ├─> Learner highlights useful conversation text
+  │     ├─> [Add to Notebook] saves it as a Phrase labeled From AI Tutor
+  │     └─> [Explain More] adds a new learner request and contextual response
   └─> Typed questions receive mock responses for the selected context
 ```
+
+The same floating Tutor launcher is available on `/notebook` and `/notebook/[lessonId]`. Tutor selections made from a lesson collection retain that lesson association; selections made from the course-wide Notebook remain in the standalone collection.
 
 ## Selected Lesson Text Flow
 
@@ -104,7 +109,7 @@ Learner highlights text inside the current lesson section
 
 ```
 Any section
-  └─> [Add to Notebook] on vocabulary/grammar details, an incorrect exercise, or selected lesson text
+  └─> [Add to Notebook] on vocabulary/grammar details, an incorrect exercise, selected lesson text, or selected AI Tutor text
         ├─> Duplicate check for the same lesson item
         └─> Item saved to versioned browser storage
               └─> Dedicated Notebook page provides:

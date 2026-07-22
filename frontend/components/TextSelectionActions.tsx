@@ -22,6 +22,7 @@ type Props = {
   isSaved: (selection: StudyTextSelection) => boolean;
   onAddToNotebook: (selection: StudyTextSelection) => boolean;
   onExplainMore: (selection: StudyTextSelection) => void;
+  ariaLabel?: string;
 };
 
 const normalizeText = (value: string) => value.replace(/\s+/g, " ").trim();
@@ -37,6 +38,7 @@ export default function TextSelectionActions({
   isSaved,
   onAddToNotebook,
   onExplainMore,
+  ariaLabel = "Actions for selected lesson text",
 }: Props) {
   const [selection, setSelection] = useState<SelectionState | null>(null);
   const [feedback, setFeedback] = useState("");
@@ -210,8 +212,8 @@ export default function TextSelectionActions({
     <>
       <div
         role="toolbar"
-        aria-label="Actions for selected lesson text"
-        className={`fixed z-[55] hidden items-center rounded-lg bg-stone-900 p-0.5 shadow-lg sm:flex ${
+        aria-label={ariaLabel}
+        className={`fixed z-[70] hidden items-center rounded-lg bg-stone-900 p-0.5 shadow-lg sm:flex ${
           selection.appearsAbove ? "-translate-x-1/2 -translate-y-full" : "-translate-x-1/2"
         }`}
         style={{ left: selection.x, top: selection.y }}
@@ -221,8 +223,8 @@ export default function TextSelectionActions({
 
       <div
         role="toolbar"
-        aria-label="Actions for selected lesson text"
-        className="fixed inset-x-3 bottom-3 z-[55] rounded-xl bg-stone-900 p-1 shadow-2xl sm:hidden"
+        aria-label={ariaLabel}
+        className="fixed inset-x-3 bottom-3 z-[70] rounded-xl bg-stone-900 p-1 shadow-2xl sm:hidden"
       >
         <div className="flex items-center justify-center">{actions}</div>
         {feedback ? <p className="px-3 pb-2 text-center text-xs text-white/70" aria-live="polite">{feedback}</p> : null}

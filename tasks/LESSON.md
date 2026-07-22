@@ -122,6 +122,8 @@ currentFocus: string  // the word or topic being studied
 - The Tutor header remains `Study Assistant`; `currentFocus` stays internal so follow-up behavior can track the latest word, grammar point, or selected excerpt without replacing the panel title
 - Panel stays open + new item explained: learner/assistant message pairs accumulate and `currentFocus` updates internally
 - Below the `xl` breakpoint the Tutor is a modal dialog with trapped focus; at `xl` and above it is an inline complementary panel that does not trap keyboard users
+- Tutor availability is route-specific unless its launcher is explicitly mounted. Keep a launcher on both Notebook routes as well as the lesson workspace.
+- Reuse the scoped text-selection actions inside the message thread. Lesson-linked Tutor excerpts retain their lesson source; course-wide Notebook excerpts use the standalone collection with `sourceSection: "AI Tutor"`.
 
 ---
 

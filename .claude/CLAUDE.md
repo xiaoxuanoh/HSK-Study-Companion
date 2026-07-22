@@ -69,7 +69,7 @@ A full-stack web app that:
 3. Covers all lesson sections: **Warm-up, Passage, Vocabulary, Grammar Notes, Word Distinction, Exercises, Writing, Expansion**
 4. Includes a **mock AI tutor panel** (upgradeable to a real backend AI call)
 5. Includes a dedicated **course-wide Notebook workspace** with versioned browser persistence, horizontal lesson previews, complete lesson collection pages, fixed-size cards with detail dialogs, search, filters, editable remarks, personal notes, and mistake review
-6. Lets learners select lesson text on any device to save a contextual Phrase or request an AI Tutor explanation
+6. Lets learners select lesson or AI Tutor text on any device to save a contextual Phrase or request a deeper AI Tutor explanation
 7. Uses **FastAPI backend** serving mock JSON data — structured to swap in Supabase + real AI later
 
 ---
@@ -116,7 +116,7 @@ Three-panel layout: LeftNav | Content Sections | AITutorPanel
       ↓
 Click vocabulary word → VocabPopup → optional add to notebook
       ↓
-Select lesson text → contextual actions → save Phrase with context or Explain More
+Select lesson or Tutor text → contextual actions → save Phrase with context or Explain More
       ↓
 Ask AI tutor → mock response (future: FastAPI → AI API)
       ↓

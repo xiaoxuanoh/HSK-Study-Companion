@@ -1,5 +1,19 @@
 # Session Log
 
+## 2026-07-22 — Notebook Tutor Launcher and Selectable Tutor Responses
+
+- Confirmed the missing Notebook AI button was structural: the existing draggable launcher was mounted only by the lesson route.
+- Added the same draggable Tutor entry point to `/notebook` and `/notebook/[lessonId]`, with a full-screen panel below `xl` and a compact right-side drawer on wider screens.
+- Reused the selection action system inside AI Tutor message threads so learners can choose `Add to Notebook` or `Explain More` after highlighting conversation text.
+- Tutor excerpts save as Phrases with surrounding message context and `From AI Tutor` metadata. Lesson-workspace and lesson-collection excerpts retain their lesson source; course-wide Notebook excerpts go to the standalone collection.
+- Kept conversations visit-local, mock-only, and compatible with the existing confirmed Clear chat behavior.
+- Frontend ESLint and strict TypeScript, backend pytest (1 test), `git diff --check`, and an isolated Next.js webpack production build passed.
+- Headless Chrome verified the launcher visually at 1440×900 and exercised the full course-wide flow: open Tutor, ask a question, select response text, show both actions, and persist the Phrase. At 390×844, the launcher remained 24px from the lower-right edges and the selected-text action bar used 12px side/bottom insets with both actions visible.
+
+### Exact Next Step
+
+- Ask the learner to visually review the Notebook Tutor drawer and Tutor-response selection behavior before committing.
+
 ## 2026-07-21–22 — Cross-device Lesson Text Selection
 
 - Added selected-text actions throughout the active lesson content without changing normal underlined-vocabulary click behavior.

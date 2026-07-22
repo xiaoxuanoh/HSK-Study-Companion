@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import NotebookCard from "@/components/NotebookCard";
+import NotebookAITutor from "@/components/NotebookAITutor";
 import { type NotebookItem, type NotebookItemType, useNotebook } from "@/lib/notebook";
 
 type FilterValue = "all" | NotebookItemType;
@@ -155,6 +156,7 @@ export default function LessonNotebookPage() {
           )}
         </div>
       </main>
+      <NotebookAITutor source={source} />
     </div>
   );
 }

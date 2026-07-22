@@ -653,6 +653,27 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               onAsk={onAsk}
               onClear={handleAiClear}
               onClose={handleAiClose}
+              selectionActions={{
+                isSaved: (selection) => notebook.some((item) => item.dedupeKey === phraseDedupeKey(selection)),
+                onAddToNotebook: (selection) => addNotebookItem({
+                  type: "phrase",
+                  title: selection.text,
+                  context: selection.context,
+                  sourceSection: selection.sectionTitle,
+                  source: notebookSource,
+                  dedupeKey: phraseDedupeKey(selection),
+                }),
+                onExplainMore: (selection) => {
+                  const contextSuffix = selection.context !== selection.text
+                    ? ` The surrounding AI Tutor message is: ${selection.context}`
+                    : "";
+                  void requestTutorExplanation({
+                    focus: selection.text,
+                    learnerMessage: `Explain “${selection.text}”`,
+                    query: `Explain the selected text “${selection.text}” from our AI Tutor conversation.${contextSuffix}`,
+                  });
+                },
+              }}
             />
           </div>
         )}

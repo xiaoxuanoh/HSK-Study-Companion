@@ -6,7 +6,7 @@ Build a polished first-draft HSK self-study website that provides teacher-style 
 
 ## Current Priority
 
-The latest `agent/add-lesson-navigation` checkpoint includes all eight lesson-refinement points, navigation/card/popup polish, the reviewed responsive/accessibility and AI-chat work, the learner-approved Notebook shelf refinement, and cross-device lesson text selection with Add to Notebook and Explain More actions. Supabase work remains paused on `feature/supabase-integration`; do not merge, extend, or activate it unless the user explicitly resumes that work.
+The latest `agent/add-lesson-navigation` checkpoint includes all eight lesson-refinement points, navigation/card/popup polish, the reviewed responsive/accessibility and AI-chat work, the learner-approved Notebook shelf refinement, and cross-device lesson text selection with Add to Notebook and Explain More actions. The current refinement extends the Tutor launcher to Notebook routes and applies the same scoped actions to Tutor conversation text. Supabase work remains paused on `feature/supabase-integration`; do not merge, extend, or activate it unless the user explicitly resumes that work.
 
 ## Build Principles
 

@@ -14,8 +14,9 @@
 - `LessonCard` — dashboard lesson card
 - `LessonOverviewModal` — modal before entering a lesson
 - `LeftNav` — lesson section tab navigation
-- `AITutorPanel` — right-side AI tutor panel
-- `TextSelectionActions` — responsive toolbar for selected lesson text
+- `AITutorPanel` — reusable AI tutor panel with selectable conversation content
+- `NotebookAITutor` — floating Notebook-route Tutor launcher and responsive panel shell
+- `TextSelectionActions` — responsive toolbar for selected lesson or AI Tutor text
 - `VocabPopup` — small popup on vocabulary word click
 - Section components: `PassageSection`, `VocabularySection`, `GrammarSection`, `WordDistinctionSection`, `ExercisesSection`, `WritingSection`, `WarmupSection`, `ExpansionSection`
 
@@ -23,7 +24,8 @@
 - React local state for current section, selected item, exercise answers, and AI panel content
 - AI messages and current focus survive Tutor close/reopen during the mounted lesson visit; confirmed clearing resets them, while leaving or reloading the lesson starts fresh
 - `frontend/lib/notebook.ts` provides a versioned local-storage repository and React subscription hook for course-wide notebook data; version 6 adds optional selected-text context and source-section metadata
-- Lesson text selection uses the browser Selection/Range APIs within the active content scope; it does not intercept selections outside lesson content
+- Lesson and AI Tutor text selection use the browser Selection/Range APIs within their active content scopes; selections outside those scopes are not intercepted
+- Tutor excerpts saved from a lesson retain that lesson source; course-wide Notebook Tutor excerpts remain standalone and carry `AI Tutor` source-section metadata
 - Notebook UI depends on the `NotebookRepository` interface so browser storage can later be replaced by an account-backed implementation
 - The course-wide overview shows up to three recent, fixed-size cards per collection in a horizontal row followed by a persistent View All tile; long content and item management live in an accessible details dialog
 - No external state library needed for the prototype

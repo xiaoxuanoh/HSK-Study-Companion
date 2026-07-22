@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import NotebookCard from "@/components/NotebookCard";
+import NotebookAITutor from "@/components/NotebookAITutor";
 import {
   type NotebookItem,
   type NotebookItemType,
@@ -278,6 +279,7 @@ export default function NotebookPage() {
           </div>
         </div>
       </main>
+      <NotebookAITutor />
     </div>
   );
 }

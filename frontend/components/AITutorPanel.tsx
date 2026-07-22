@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import TextSelectionActions, { type StudyTextSelection } from "@/components/TextSelectionActions";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -10,6 +11,12 @@ type Props = {
   onAsk: (query: string) => void;
   onClear: () => void;
   onClose: () => void;
+  emptyStateText?: string;
+  selectionActions?: {
+    isSaved: (selection: StudyTextSelection) => boolean;
+    onAddToNotebook: (selection: StudyTextSelection) => boolean;
+    onExplainMore: (selection: StudyTextSelection) => void;
+  };
 };
 
 const suggestions = [
@@ -21,11 +28,20 @@ const suggestions = [
   "Make a mini quiz",
 ];
 
-export default function AITutorPanel({ currentFocus, messages, onAsk, onClear, onClose }: Props) {
+export default function AITutorPanel({
+  currentFocus,
+  messages,
+  onAsk,
+  onClear,
+  onClose,
+  emptyStateText = "Select a vocabulary word and choose “Explain More”, or type a question below.",
+  selectionActions,
+}: Props) {
   const [input, setInput] = useState("");
   const [isModal, setIsModal] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -122,20 +138,23 @@ export default function AITutorPanel({ currentFocus, messages, onAsk, onClear, o
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4" aria-live="polite" aria-relevant="additions">
+      <div
+        ref={messagesRef}
+        className="flex-1 select-text space-y-4 overflow-y-auto px-4 py-3"
+        aria-live="polite"
+        aria-relevant="additions"
+      >
         {messages.length === 0 && (
-          <p className="text-sm text-muted">
-            Select a vocabulary word and choose &ldquo;Explain More&rdquo;, or type a question below.
-          </p>
+          <p className="text-sm text-muted">{emptyStateText}</p>
         )}
         {messages.map((msg, idx) =>
           msg.role === "assistant" ? (
-            <div key={idx} className="border-l-2 border-accent pl-3 text-sm text-ink whitespace-pre-line">
+            <div key={idx} data-selection-context className="border-l-2 border-accent pl-3 text-sm text-ink whitespace-pre-line">
               {msg.content}
             </div>
           ) : (
             <div key={idx} className="flex justify-end">
-              <div className="rounded-lg border border-stone-200 bg-paper px-3 py-2 text-sm text-ink max-w-[85%]">
+              <div data-selection-context className="rounded-lg border border-stone-200 bg-paper px-3 py-2 text-sm text-ink max-w-[85%]">
                 {msg.content}
               </div>
             </div>
@@ -143,6 +162,16 @@ export default function AITutorPanel({ currentFocus, messages, onAsk, onClear, o
         )}
         <div ref={bottomRef} />
       </div>
+
+      {selectionActions ? (
+        <TextSelectionActions
+          scopeRef={messagesRef}
+          sectionKey="ai-tutor"
+          sectionTitle="AI Tutor"
+          ariaLabel="Actions for selected AI Tutor text"
+          {...selectionActions}
+        />
+      ) : null}
 
       {/* Suggestion chips — only after first message */}
       {messages.length > 0 && (
